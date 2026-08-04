@@ -204,8 +204,10 @@ parse(text) // → { title, artist, key, styles: [], sections: [{ label, lines }
 ```
 
 Each line is `{ lyric: string, chords: [{ index, chord }] }` where `index` is a
-character offset into `lyric`. A chord-only line (an intro or instrumental) is a
-line with an empty `lyric` and chords at ascending indices.
+character offset into `lyric`. Whitespace is preserved verbatim, so a chord-only
+line (an intro or instrumental) parses as chords at ascending indices into a
+lyric made only of the spaces that separated them — which is what lets the
+renderer reproduce the original chord spacing without special-casing it.
 
 ### `js/render.js`
 
@@ -269,7 +271,13 @@ scope that v1 does not need.
   section grouping, unknown directives ignored, repeated `{meta: style ...}`
   collecting into a list, and the first-chord fallback when `{key:}` is absent.
 
-`render.js` and `app.js` are verified by using the app, not by tests.
+- `test/render.test.js` — `splitLine` only: chordless lines, text before the
+  first chord, and chunk boundaries running to the next chord.
+
+Everything else in `render.js`, and all of `app.js`, is verified by using the
+app rather than by tests. `splitLine` is the exception because it is pure index
+arithmetic, and an off-by-one there puts a chord one character from where it
+belongs — precisely the kind of error that survives a visual check.
 
 ## Files
 
@@ -288,12 +296,12 @@ songs/
 test/
   transpose.test.js
   chordpro.test.js
+  render.test.js
 .claude/skills/add-song/SKILL.md
 package.json          # { "type": "module", "scripts": { "test": "node --test" } }
 ```
 
-The working directory stays `singit/`; renaming it to `jfavrites/` is a one-line
-change whenever wanted.
+The project lives in `JFavrites/`.
 
 ## The `add-song` skill
 
