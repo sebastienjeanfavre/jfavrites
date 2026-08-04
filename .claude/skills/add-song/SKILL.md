@@ -43,7 +43,8 @@ For each chord line paired with the lyric line beneath it:
    them shifts every position.
 2. Emit `[Chord]` inline at that character index in the lyric line below.
 3. If a chord line has no lyric line under it (an intro or a solo), keep it as a
-   chord-only line, preserving the spacing between the chords.
+   line of `[Chord]` tokens with the original whitespace between them, so the
+   spacing survives.
 
 Strip `[tab]` and `[/tab]` wrappers. Convert section markers like `[Verse 1]` or
 `[Chorus]` into `{comment: Verse 1}`.
@@ -57,8 +58,9 @@ failure to avoid. Confirm before writing.
 
 ### 5. Write the files
 
-Write `songs/<slug>.chordpro`, where the slug is the lowercase title with spaces
-replaced by hyphens and non-alphanumeric characters removed:
+Write `songs/<slug>.chordpro`, where the slug is the title lowercased, with
+everything except letters, digits and spaces removed, and then spaces replaced
+by hyphens:
 
 ```
 {title: <title>}
@@ -90,8 +92,9 @@ looked at it.
 ## Rules
 
 - **Valid ChordPro only.** This songbook uses `{title:}`, `{artist:}`, `{key:}`,
-  `{comment:}` and `{meta: style ...}`. Never invent a directive. Custom metadata
-  goes through `{meta: name value}`, which is ChordPro's own extension point.
+  `{comment:}` and `{meta: style ...}`. Never invent a directive. `{meta: style
+  ...}` is the only custom metadata this app reads — other `{meta:}` names are
+  valid ChordPro but are parsed and silently ignored here.
 - **One `{meta: style ...}` per tag.** Repeated directives with the same name
   collect into a list; do not comma-separate values on one line.
 - **Do not transpose the source.** Store the song in whatever key it was written
