@@ -1,0 +1,115 @@
+:root {
+  color-scheme: light dark;
+  --pad: 1rem;
+  --rule: rgba(128, 128, 128, 0.3);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font: 16px/1.5 system-ui, -apple-system, sans-serif;
+}
+
+#bar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem var(--pad);
+  background: Canvas;
+  border-bottom: 1px solid var(--rule);
+}
+
+#back {
+  padding: 0 0.3rem;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: inherit;
+  text-decoration: none;
+}
+
+#heading {
+  flex: 1;
+  margin: 0;
+  font-size: 1.05rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#controls {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+#key {
+  min-width: 2.5rem;
+  text-align: center;
+  font-weight: 700;
+}
+
+button {
+  font: inherit;
+  min-width: 2.4rem;
+  min-height: 2.4rem;
+  border: 1px solid var(--rule);
+  border-radius: 0.4rem;
+  background: transparent;
+  color: inherit;
+}
+
+main { padding: var(--pad); }
+
+.songbook {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.songbook a {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 0;
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+}
+
+.songbook span {
+  font-size: 0.85rem;
+  opacity: 0.65;
+}
+
+h2 {
+  margin: 1.4rem 0 0.4rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.55;
+}
+
+.line { margin: 0 0 0.4rem; }
+
+.chunk {
+  display: inline-block;
+  vertical-align: bottom;
+}
+
+.chord {
+  display: block;
+  min-height: 1.25em;
+  font-size: 0.8rem;
+  line-height: 1.25;
+  font-weight: 700;
+  color: #b4531f;
+}
+
+.text { white-space: pre-wrap; }
+
+@media (prefers-color-scheme: dark) {
+  .chord { color: #f0a35e; }
+}
