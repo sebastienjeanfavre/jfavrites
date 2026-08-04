@@ -40,8 +40,17 @@ Two independent halves joined by a file format. Neither knows the other exists.
                         songs/*.chordpro
 ```
 
-No server, no database, no build step. The site is static files served by
-Cloudflare Pages.
+No server, no database, no build step.
+
+**Hosting: Netlify.** Netlify Drop takes a dragged folder and serves it, with no
+account, CLI or git integration required — the shortest path from "it works
+locally" to "everyone has the link". Git-connected deploys are a later upgrade,
+not a prerequisite.
+
+The host is deliberately not load-bearing. With no build step, no server and no
+environment configuration, moving to Cloudflare Pages, GitHub Pages or a machine
+at home is a matter of minutes. Nothing in this design should be chosen to suit
+a particular host.
 
 **Why no backend.** Scraping was the only requirement that forced one. Moving
 the scrape off the critical path — done once per song, interactively, with a
