@@ -72,3 +72,16 @@ test('key falls back to the first chord when the directive is absent', () => {
 test('key falls back to C when there are no chords at all', () => {
   assert.equal(parse('{title: X}\nno chords here\n').key, 'C');
 });
+
+test('a valueless directive is ignored and does not appear as lyric text', () => {
+  const s = parse('{title: X}\n{key: C}\n{start_of_chorus}\n[C]hello\n');
+  const allLyrics = s.sections.flatMap((sec) => sec.lines.map((l) => l.lyric));
+  assert.ok(!allLyrics.some((lyric) => lyric.includes('start_of_chorus')));
+  assert.deepEqual(allLyrics, ['hello']);
+});
+
+test('{soc}/{eoc} around a section leave the lyrics intact', () => {
+  const s = parse('{title: X}\n{key: C}\n{soc}\n[C]hello [G]world\n{eoc}\n');
+  const allLyrics = s.sections.flatMap((sec) => sec.lines.map((l) => l.lyric));
+  assert.deepEqual(allLyrics, ['hello world']);
+});

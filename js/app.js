@@ -79,7 +79,8 @@ function showNotFound() {
 
 async function showSong(slug, offset) {
   const id = ++request;
-  if (loaded.slug !== slug) {
+  const isNewSong = loaded.slug !== slug;
+  if (isNewSong) {
     let text;
     try {
       const res = await fetch(`songs/${slug}.chordpro`);
@@ -99,7 +100,7 @@ async function showSong(slug, offset) {
   heading.textContent = song.title;
   keyEl.textContent = transposeKey(song.key, offset);
   main.replaceChildren(renderSong(song, offset));
-  scrollTo(0, 0);
+  if (isNewSong) scrollTo(0, 0);
 }
 
 function render() {

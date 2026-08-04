@@ -1,4 +1,4 @@
-const DIRECTIVE_RE = /^\{\s*([a-z_]+)\s*:\s*(.*?)\s*\}$/i;
+const DIRECTIVE_RE = /^\{\s*([a-z_]+)\s*(?::\s*(.*?)\s*)?\}$/i;
 const CHORD_TOKEN_RE = /\[([^\]]+)\]/g;
 // Root plus 'm', but not the 'm' that starts 'maj'.
 const CHORD_TO_KEY_RE = /^([A-G][#b]?)(m(?!aj))?/;
@@ -17,7 +17,7 @@ export function parse(text) {
 
     const directive = DIRECTIVE_RE.exec(trimmed);
     if (directive) {
-      applyDirective(song, directive[1].toLowerCase(), directive[2], (label) => {
+      applyDirective(song, directive[1].toLowerCase(), directive[2] ?? '', (label) => {
         section = { label, lines: [] };
         song.sections.push(section);
       });

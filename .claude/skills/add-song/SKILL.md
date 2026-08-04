@@ -100,6 +100,11 @@ looked at it.
 - **Do not transpose the source.** Store the song in whatever key it was written
   in and record that in `{key:}`. The app transposes at read time.
 - **Preserve chord spelling as written**, including slash chords like `C/E`.
+- **`{key:}` must match `[A-G][#b]?m?` exactly** — a letter A-G, an optional `#`
+  or `b`, an optional trailing `m` for minor, and nothing else. The app
+  transposes this value at read time; anything outside that grammar is left
+  unchanged while the chords keep transposing, silently breaking the header.
+  `C major`, `Gmaj` and `Am7` are not valid key values — use `C`, `G` and `Am`.
 - **When the parse looks wrong, say so** rather than writing a file that needs
   silent correction later. A chord landing one syllable off is the common
   failure, and it is far cheaper to catch here than on a sofa with a guitar.
