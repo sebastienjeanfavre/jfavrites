@@ -65,14 +65,25 @@ needs no server.
 
 ## The song file
 
-A subset of ChordPro. One file per song. Plain text, hand-editable when the
-parser gets something wrong — which is the most valuable debugging property in
-the whole design.
+ChordPro. One file per song. Plain text, hand-editable when the parser gets
+something wrong — which is the most valuable debugging property in the whole
+design.
+
+**Why ChordPro over a JSON song format.** JSON would delete `chordpro.js` from
+the app entirely — `fetch().then(r => r.json())` and done. Rejected for two
+reasons. First, we accepted a scraper that will occasionally attach a chord one
+syllable late; fixing that means moving `[C]` two characters by eye, versus
+recounting a character offset in `{"i": 12}`. The error strategy is "fix it by
+hand", so the format has to make that easy. Second, ChordPro files open in
+OnSong, SongBook, Chordii and others — the songbook is the durable asset, the
+app is disposable. A bespoke JSON shape opens in nothing.
 
 ```
 {title: Let It Be}
 {artist: The Beatles}
 {key: C}
+{meta: style pop}
+{meta: style singalong}
 
 {comment: Verse}
 When I find my[C]self in times of [G]trouble
@@ -90,10 +101,39 @@ Supported directives:
 | `{artist: ...}` | Artist. Required. |
 | `{key: ...}` | Original key, e.g. `C`, `Am`. Required — transposition and enharmonic spelling depend on it. |
 | `{comment: ...}` | Section label (Verse, Chorus, Bridge). Rendered as a heading. |
+| `{meta: style ...}` | One style/genre tag. Repeat the directive for multiple. Optional. |
 
 Anything in `[...]` inline is a chord attached to the character that follows it.
 Blank lines separate blocks. Unrecognised directives are ignored rather than
 treated as errors.
+
+**Files must be valid ChordPro. No invented directives.** This is a hard rule,
+not a preference — it is what keeps the songbook readable by other tools, which
+is half the reason for choosing the format. `{meta: name value}` is ChordPro's
+standard extension point for custom metadata, and repeated `{meta:}` entries
+sharing a name collect into a list, so `style` needs nothing bespoke. If section
+markers ever need real semantics rather than a label, use standard
+`{start_of_chorus}` / `{end_of_chorus}` rather than inventing something.
+
+**Missing or wrong `{key:}`.** Enharmonic spelling depends on it, and Ultimate
+Guitar's tonality field is not always right. When `{key:}` is absent, fall back
+to the song's first chord. This is a heuristic, not a music-theory analysis — it
+is correct for the large majority of popular songs and wrong in a way that only
+affects sharp-versus-flat spelling, never which notes are played.
+
+### Styles
+
+`{meta: style ...}` exists in v1 but nothing reads it: no filter UI, no display.
+It is stored now purely because backfilling tags across forty song files later
+is tedious, while having the skill propose them at scrape time costs nothing.
+
+This is a deliberate exception to the YAGNI rule applied everywhere else in this
+spec, and the justification is narrow: the cost of adding the data later is much
+higher than the cost of capturing it now. It does not license any other
+speculative field.
+
+The skill proposes style tags when adding a song and asks for confirmation, so
+the vocabulary stays consistent rather than accumulating near-duplicates.
 
 ### The index
 
@@ -101,13 +141,19 @@ Static hosting cannot list a directory, so the songbook needs a real file:
 
 ```json
 [
-  { "slug": "let-it-be", "title": "Let It Be", "artist": "The Beatles", "key": "C" }
+  {
+    "slug": "let-it-be",
+    "title": "Let It Be",
+    "artist": "The Beatles",
+    "key": "C",
+    "styles": ["pop", "singalong"]
+  }
 ]
 ```
 
 `songs/index.json` is maintained by the `add-song` skill and sorted by title.
-`key` is carried here so the songbook list can show each song's original key
-without fetching every file.
+`key` and `styles` are carried here so the songbook list can show the original
+key, and later filter by style, without fetching every song file.
 
 ## URL scheme
 
@@ -154,7 +200,7 @@ not C♯, which is what a musician expects to read.
 ### `js/chordpro.js`
 
 ```js
-parse(text) // → { title, artist, key, sections: [{ label, lines }] }
+parse(text) // → { title, artist, key, styles: [], sections: [{ label, lines }] }
 ```
 
 Each line is `{ lyric: string, chords: [{ index, chord }] }` where `index` is a
@@ -220,7 +266,8 @@ scope that v1 does not need.
   this only restores the input string exactly when the source file already
   spelled its chords conventionally for its key).
 - `test/chordpro.test.js` — directives, chord index positions, chord-only lines,
-  section grouping, unknown directives ignored.
+  section grouping, unknown directives ignored, repeated `{meta: style ...}`
+  collecting into a list, and the first-chord fallback when `{key:}` is absent.
 
 `render.js` and `app.js` are verified by using the app, not by tests.
 
@@ -263,8 +310,10 @@ Steps:
    `[ch]...[/ch]` markers. For each chord line paired with the lyric line below
    it, compute each chord's column *after* stripping the marker text, then emit
    an inline `[X]` at the matching character index in the lyric.
-4. Write `songs/<slug>.chordpro` and insert into `songs/index.json`.
-5. Print the result for review before committing.
+4. Propose style tags, showing the tags already used across the songbook so the
+   vocabulary stays consistent, and confirm before writing.
+5. Write `songs/<slug>.chordpro` and insert into `songs/index.json`.
+6. Print the result for review before committing.
 
 If the fetch is blocked, the skill asks for the page text to be pasted instead
 and continues from step 3. The `[ch]` markers mean chord identification does not
