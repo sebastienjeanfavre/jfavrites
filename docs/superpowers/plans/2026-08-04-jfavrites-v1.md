@@ -14,7 +14,7 @@
 - **No build step.** Files served are files written. ES modules loaded natively via `<script type="module">`.
 - **Song files must be valid ChordPro.** No invented directives. Custom metadata uses `{meta: name value}`.
 - **Only these directives are read:** `{title:}`, `{artist:}`, `{key:}`, `{comment:}`, `{meta: style ...}`. Unrecognised directives are ignored, never errors.
-- **No defensive error handling.** Two user-facing failure messages exist and no others: `Could not load songbook.` and `Song not found.` No retries, no logging, no fallbacks.
+- **No defensive error handling.** Two user-facing failure messages exist and no others: `Could not load songbook.` and `Song not found.` No retries, no logging, no fallbacks. This bars handling of failures that have not been shown to happen; it does not bar guards that keep the app correct, such as ignoring a fetch whose result arrives after the route has already changed.
 - **No DOM access in `transpose.js` or `chordpro.js`.** They must import and run under `node --test`. `render.js` may use `document` inside functions but never at module top level.
 - **Text content is set via `textContent`, never `innerHTML`.**
 - **Sample song must be public domain.** Amazing Grace (Traditional) is the fixture, so no copyrighted lyrics enter the repo or the tests.

@@ -12,6 +12,9 @@ const shareBtn = document.getElementById('share');
 // Keep the parsed song so pressing + does not refetch on every press.
 let loaded = { slug: null, song: null };
 
+// Bumped on every route change; a response only paints if it is still current.
+let request = 0;
+
 function route() {
   const [slug, offset] = location.hash.replace(/^#/, '').split('/');
   return { slug, offset: Number.parseInt(offset, 10) || 0 };
@@ -22,6 +25,7 @@ function go(slug, offset) {
 }
 
 async function showSongbook() {
+  const id = ++request;
   controls.hidden = true;
   back.hidden = true;
   heading.textContent = 'JFavrites';
@@ -33,9 +37,10 @@ async function showSongbook() {
     if (!res.ok) throw new Error('index');
     songs = await res.json();
   } catch {
-    main.textContent = 'Could not load songbook.';
+    if (id === request) main.textContent = 'Could not load songbook.';
     return;
   }
+  if (id !== request) return;
 
   const ul = document.createElement('ul');
   ul.className = 'songbook';
@@ -73,6 +78,7 @@ function showNotFound() {
 }
 
 async function showSong(slug, offset) {
+  const id = ++request;
   if (loaded.slug !== slug) {
     let text;
     try {
@@ -80,9 +86,10 @@ async function showSong(slug, offset) {
       if (!res.ok) throw new Error('404');
       text = await res.text();
     } catch {
-      showNotFound();
+      if (id === request) showNotFound();
       return;
     }
+    if (id !== request) return;
     loaded = { slug, song: parse(text) };
   }
 
