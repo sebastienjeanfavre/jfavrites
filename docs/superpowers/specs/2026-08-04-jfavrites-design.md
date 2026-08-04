@@ -97,6 +97,8 @@ Static hosting cannot list a directory, so the songbook needs a real file:
 ```
 
 `songs/index.json` is maintained by the `add-song` skill and sorted by title.
+`key` is carried here so the songbook list can show each song's original key
+without fetching every file.
 
 ## URL scheme
 
@@ -126,8 +128,8 @@ The only module with real logic, and therefore the only one carrying meaningful
 test weight.
 
 ```js
-transposeChord(chord, semitones, preferFlats) // "C#m7/G#" → "Em7/B"
-transposeKey(key, semitones)                  // "C" +2 → "D";  "Am" +3 → "Cm"
+transposeChord(chord, semitones, preferFlats) // ("C#m7/G#", 3, false) → "Em7/B"
+transposeKey(key, semitones)                  // ("C", 2) → "D";  ("Am", 3) → "Cm"
 prefersFlats(key)                             // "F" → true;  "G" → false
 ```
 
@@ -204,8 +206,10 @@ scope that v1 does not need.
 `node --test`, matching the convention in `showmyride`. No browser tests.
 
 - `test/transpose.test.js` — every root across all 12 semitone shifts, flats and
-  sharps, minors, slash chords, extensions, and round-trip identity (`+n` then
-  `−n` returns the original spelling within the same key).
+  sharps, minors, slash chords, extensions, and round-trip behaviour (`+n` then
+  `−n` returns to the original key, spelled by that key's own convention — note
+  this only restores the input string exactly when the source file already
+  spelled its chords conventionally for its key).
 - `test/chordpro.test.js` — directives, chord index positions, chord-only lines,
   section grouping, unknown directives ignored.
 
