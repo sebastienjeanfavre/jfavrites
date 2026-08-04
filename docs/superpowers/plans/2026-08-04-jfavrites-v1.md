@@ -1145,3 +1145,27 @@ which is what keeps the app itself free of a backend."
 ## Done
 
 Songs render with transposable chords, share links carry the key, the app is live on HTTPS, and new songs arrive with one request to Claude Code.
+
+## Amendments made during execution
+
+The code blocks above are the plan as written. Review found two defects in
+them, and the shipped code differs accordingly. Recorded here rather than
+edited in above, so the plan stays a record of what was planned and this
+section records what changed.
+
+**Task 4 — stale async responses could overwrite the current view.** As
+written, `showSongbook` and `showSong` await a fetch and then paint
+unconditionally. A response arriving after the route had already changed would
+overwrite the newer view: a slow `index.json` appending a stray songbook list
+under a song's lyrics, or a stale 404 calling `showNotFound()` while the
+address bar read a valid song. Fixed with a module-level request counter,
+captured at each function's entry and compared after every `await`. Commit
+`5516091`.
+
+**Task 6 — three ambiguities in the `add-song` skill text.** The slug rule's
+operation order contradicted itself, stripping the hyphens it had just
+inserted. The chord-only-line rule omitted the `[Chord]` bracket syntax, so
+intros and solos could have been written as plain text that never transposes.
+And `{meta: name value}` was described as a general extension point when this
+app reads only `{meta: style ...}` and silently discards the rest. All three
+were prose, all three now say what they meant. Commit `ab77d93`.
