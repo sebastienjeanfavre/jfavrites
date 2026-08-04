@@ -254,9 +254,11 @@ No retries, no logging, no fallbacks. A static file either loads or it does not.
 
 ## PWA
 
-A minimal `manifest.json` plus an apple-touch-icon, so "Add to Home Screen" gives
-a real icon and a chrome-less launch. No service worker — offline caching is
-scope that v1 does not need.
+A minimal `manifest.json`, so "Add to Home Screen" gives a chrome-less launch.
+
+No icon files: iOS falls back to a screenshot of the page, which is adequate, and
+drawing a real icon is a couple of minutes' work at any later point. No service
+worker either — offline caching is scope v1 does not need.
 
 ## Testing
 
