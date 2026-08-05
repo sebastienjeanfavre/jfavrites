@@ -10,7 +10,12 @@ const keyEl = document.getElementById('key');
 const shareBtn = document.getElementById('share');
 
 // Keep the parsed song so pressing + does not refetch on every press.
+// Answers "do I need to fetch?" — untouched by navigating away and back.
 let loaded = { slug: null, song: null };
+
+// The slug currently painted in the song view. Answers "is this already on
+// screen?" — cleared whenever the song view is not what's showing.
+let onScreen = null;
 
 // Bumped on every route change; a response only paints if it is still current.
 let request = 0;
@@ -26,6 +31,7 @@ function go(slug, offset) {
 
 async function showSongbook() {
   const id = ++request;
+  onScreen = null;
   controls.hidden = true;
   back.hidden = true;
   heading.textContent = 'JFavrites';
@@ -63,6 +69,7 @@ async function showSongbook() {
 }
 
 function showNotFound() {
+  onScreen = null;
   controls.hidden = true;
   back.hidden = false;
   heading.textContent = 'Not found';
@@ -79,8 +86,8 @@ function showNotFound() {
 
 async function showSong(slug, offset) {
   const id = ++request;
-  const isNewSong = loaded.slug !== slug;
-  if (isNewSong) {
+  const isNewSong = onScreen !== slug;
+  if (loaded.slug !== slug) {
     let text;
     try {
       const res = await fetch(`songs/${slug}.chordpro`);
@@ -101,6 +108,7 @@ async function showSong(slug, offset) {
   keyEl.textContent = transposeKey(song.key, offset);
   main.replaceChildren(renderSong(song, offset));
   if (isNewSong) scrollTo(0, 0);
+  onScreen = slug;
 }
 
 function render() {
