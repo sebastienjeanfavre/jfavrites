@@ -121,6 +121,16 @@ h2 {
   color: #b4531f;
 }
 
+/* A chunk is as wide as its widest part. When the chord is wider than its
+   slice of lyric — always, on a chord-only line like an intro — the chord
+   fills the chunk and the next one starts flush against it (AmFmaj7). This
+   padding is carried by the chord itself, so it widens the chunk and forces
+   a gap. :not(:empty) keeps chordless chunks out of it, so nothing is
+   inserted into the middle of a lyric. */
+.chord:not(:empty) {
+  padding-right: 0.75em;
+}
+
 .text { white-space: pre-wrap; }
 
 @media (prefers-color-scheme: dark) {
