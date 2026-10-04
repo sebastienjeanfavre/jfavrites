@@ -30,7 +30,7 @@ trim leading whitespace. Line classes:
 |---|---|
 | `div.pL` | lyric line with chords |
 | `div.pLS` | lyric line without chords |
-| `div.pLI` | instrumental line; chords are `span.ALI` between `|` bar marks |
+| `div.pLI` | instrumental line; chords are `span.ALI` between bar marks |
 | `div.pLVV` | empty — stanza break |
 | `div.dR` | wraps the refrain's lines |
 

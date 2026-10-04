@@ -28,7 +28,8 @@ pasted instead and continue from step 2.
 
 ### 2. Convert to ChordPro
 
-The source gives chords-over-lyrics text. For each chord line paired with the
+If the source file gives chords already inline, use them as they are. Otherwise
+the source gives chords-over-lyrics text; for each chord line paired with the
 lyric line beneath it:
 
 1. Record each chord and its column, measured on the visible text only — any
