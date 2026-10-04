@@ -1,5 +1,15 @@
 [
   {
+    "slug": "il-faut-que-je-men-aille",
+    "title": "Il faut que je m'en aille",
+    "artist": "Graeme Allwright",
+    "key": "C",
+    "styles": [
+      "chanson-francaise",
+      "singalong"
+    ]
+  },
+  {
     "slug": "let-it-be",
     "title": "Let It Be",
     "artist": "The Beatles",
