@@ -39,8 +39,17 @@ lyric line beneath it:
    line of `[Chord]` tokens with the original whitespace between them, so the
    spacing survives.
 
-Convert section labels (`[Verse 1]`, `Refrain :`) into `{comment: ...}`, keeping
-the source's wording and language. If the sheet says to use a capo, keep the
+Label sections with `{comment: ...}`, using only these four labels, in English
+and without numbers, whatever the source says:
+
+| Label | Use for |
+|---|---|
+| `Verse` | each verse |
+| `Chorus` | the part that repeats with the same lyrics (`Refrain`) |
+| `Bridge` | a different part with lyrics that occurs once |
+| `Instrumental` | chords with no lyrics: intro, solo, outro |
+
+Merge two `Instrumental` sections that follow each other into one. If the sheet says to use a capo, keep the
 chords as written and add `{comment: Capo N}` at the top.
 
 ### 3. Propose style tags

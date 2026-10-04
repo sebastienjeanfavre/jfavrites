@@ -34,9 +34,9 @@ trim leading whitespace. Line classes:
 | `div.pLVV` | empty — stanza break |
 | `div.dR` | wraps the refrain's lines |
 
-There are no section-label elements. Mark a `div.dR` block as
-`{comment: Refrain}`; labels such as `(Refrain)` written as lyric text stay as
-`{comment: ...}` in the sheet's wording. Ignore everything outside
+There are no section-label elements. A `div.dR` block is a `Chorus`; the other
+stanzas are usually verses. Labels such as `(Refrain)` written as lyric text
+become the matching label from SKILL.md. Ignore everything outside
 `#divPartition` (chord diagrams, other songs, comments). The *Version TXT*
 link (`/partitions/versionTxt?...`) answers `Erreur d'accès` to curl; don't use
 it.
