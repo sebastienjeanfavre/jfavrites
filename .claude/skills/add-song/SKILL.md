@@ -72,7 +72,7 @@ then spaces replaced by hyphens: `Il faut que je m'en aille` →
 {key: <key>}
 {meta: style <tag>}
 
-{comment: Verse 1}
+{comment: Verse}
 <lyrics with inline chords>
 ```
 

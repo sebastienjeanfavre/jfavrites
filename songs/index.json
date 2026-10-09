@@ -1,5 +1,35 @@
 [
   {
+    "slug": "desole-pour-hier-soir",
+    "title": "Désolé pour hier soir",
+    "artist": "Tryo",
+    "key": "Cm",
+    "styles": [
+      "chanson-francaise",
+      "singalong"
+    ]
+  },
+  {
+    "slug": "i-wanna-be-like-you",
+    "title": "I Wanna Be Like You",
+    "artist": "Louis Prima",
+    "key": "C",
+    "styles": [
+      "singalong",
+      "jazz"
+    ]
+  },
+  {
+    "slug": "il-est-libre-max",
+    "title": "Il est libre Max",
+    "artist": "Hervé Cristiani",
+    "key": "Em",
+    "styles": [
+      "chanson-francaise",
+      "singalong"
+    ]
+  },
+  {
     "slug": "il-faut-que-je-men-aille",
     "title": "Il faut que je m'en aille",
     "artist": "Graeme Allwright",
@@ -10,12 +40,53 @@
     ]
   },
   {
+    "slug": "lhorloge-tourne",
+    "title": "L'horloge tourne",
+    "artist": "Mickaël Miro",
+    "key": "Am",
+    "styles": [
+      "chanson-francaise",
+      "singalong"
+    ]
+  },
+  {
+    "slug": "les-copains-dabord",
+    "title": "Les copains d'abord",
+    "artist": "Georges Brassens",
+    "key": "D",
+    "styles": [
+      "chanson-francaise",
+      "singalong"
+    ]
+  },
+  {
+    "slug": "les-gros-nichons",
+    "title": "Les gros nichons",
+    "artist": "Beaufolie",
+    "key": "A",
+    "styles": [
+      "chanson-francaise",
+      "singalong",
+      "paillarde"
+    ]
+  },
+  {
     "slug": "let-it-be",
     "title": "Let It Be",
     "artist": "The Beatles",
     "key": "C",
     "styles": [
       "classic-rock",
+      "singalong"
+    ]
+  },
+  {
+    "slug": "toi-et-moi",
+    "title": "Toi et moi",
+    "artist": "Guillaume Grand",
+    "key": "Em",
+    "styles": [
+      "chanson-francaise",
       "singalong"
     ]
   }
