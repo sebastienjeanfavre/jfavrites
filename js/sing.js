@@ -80,7 +80,7 @@ function onHidden() {
 
 // Safari cannot split one recording into standalone files, so each chunk is its own recorder.
 function recordChunk(s) {
-  const recorder = new MediaRecorder(s.stream, { audioBitsPerSecond: 24000 });
+  const recorder = new MediaRecorder(s.stream);
   const parts = [];
   recorder.ondataavailable = (e) => parts.push(e.data);
   recorder.onstop = () => {
