@@ -93,6 +93,7 @@ body {
 }
 
 /* display: flex would override the hidden attribute's display: none. */
+#bar[hidden],
 #controls[hidden] { display: none; }
 
 #controls {
