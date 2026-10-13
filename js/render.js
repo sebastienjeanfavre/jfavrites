@@ -15,6 +15,19 @@ export function splitLine(line) {
   return chunks;
 }
 
+// Chunks are inline blocks, so a line can only wrap between them. Chords often
+// sit mid-word, so a chunk boundary is a legal wrap point only when the chunk
+// before it ends in whitespace.
+export function splitWords(chunks) {
+  const groups = [];
+  for (const chunk of chunks) {
+    const last = groups.at(-1)?.at(-1);
+    if (last && !/\s$/.test(last.text)) groups.at(-1).push(chunk);
+    else groups.push([chunk]);
+  }
+  return groups;
+}
+
 export function renderSong(song, semitones) {
   const flats = prefersFlats(transposeKey(song.key, semitones));
   const frag = document.createDocumentFragment();
@@ -39,20 +52,30 @@ function renderLine(line, index, semitones, flats) {
   const p = document.createElement('p');
   p.className = 'line';
   p.dataset.line = index;
-  for (const chunk of splitLine(line)) {
-    const span = document.createElement('span');
-    span.className = 'chunk';
+  for (const group of splitWords(splitLine(line))) {
+    const chunks = group.map((chunk) => {
+      const span = document.createElement('span');
+      span.className = 'chunk';
 
-    const chord = document.createElement('b');
-    chord.className = 'chord';
-    chord.textContent = chunk.chord ? transposeChord(chunk.chord, semitones, flats) : '';
+      const chord = document.createElement('b');
+      chord.className = 'chord';
+      chord.textContent = chunk.chord ? transposeChord(chunk.chord, semitones, flats) : '';
 
-    const text = document.createElement('span');
-    text.className = 'text';
-    text.textContent = chunk.text;
+      const text = document.createElement('span');
+      text.className = 'text';
+      text.textContent = chunk.text;
 
-    span.append(chord, text);
-    p.append(span);
+      span.append(chord, text);
+      return span;
+    });
+    if (group.length === 1) {
+      p.append(chunks[0]);
+    } else {
+      const word = document.createElement('span');
+      word.className = 'word';
+      word.append(...chunks);
+      p.append(word);
+    }
   }
   return p;
 }

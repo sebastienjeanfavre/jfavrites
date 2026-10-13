@@ -117,6 +117,14 @@ h2 {
   vertical-align: bottom;
 }
 
+/* A word split across several chords must not wrap between them. max-width
+   lets a word wider than the screen still break as a last resort. */
+.word {
+  display: inline-block;
+  vertical-align: bottom;
+  max-width: 100%;
+}
+
 .chord {
   display: block;
   min-height: 1.25em;
