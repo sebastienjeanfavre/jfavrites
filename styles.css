@@ -53,6 +53,9 @@ body {
   text-overflow: ellipsis;
 }
 
+/* display: flex would override the hidden attribute's display: none. */
+#controls[hidden] { display: none; }
+
 #controls {
   display: flex;
   gap: 0.4rem;
