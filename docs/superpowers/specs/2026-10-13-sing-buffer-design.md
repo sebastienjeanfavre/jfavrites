@@ -162,9 +162,11 @@ repeat better than the true place, and the cursor jumps ahead.
 - Search start positions from `cursor − LOOKBACK` to `cursor + LOOKAHEAD`.
   `LOOKBACK = 20` words covers 3 s of overlap plus timing noise.
 - Return `max(cursor, best.last + 1)`. The cursor still never moves back.
-- Ties prefer a match that ends at or after the cursor, then the earliest
-  one. Without this, a line sung again would match its earlier occurrence
-  behind the cursor, and the cursor would hold.
+- Ties pick the earliest position. A window of only words just sung then
+  holds the cursor, even when the same words repeat ahead. A line sung again
+  still moves forward, because its window also holds the words before it.
+  The cost: a repeat right after a pause, with its twin less than 20 words
+  behind, holds for one window.
 
 With the old half matched at its true place, the 40 % ratio check also sees
 the full window as matched.

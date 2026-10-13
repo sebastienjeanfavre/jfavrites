@@ -46,10 +46,7 @@ export function advance(words, cursor, transcript) {
   for (let start = Math.max(0, cursor - LOOKBACK); start < end; start++) {
     const slice = words.slice(start, start + span).map((w) => w.word);
     const { count, last } = lcs(heard, slice);
-    const ahead = start + last >= cursor;
-    if (count > best.count || (count === best.count && ahead && best.last < cursor)) {
-      best = { count, last: start + last };
-    }
+    if (count > best.count) best = { count, last: start + last };
   }
 
   if (best.count < MIN_MATCH || best.count < heard.length * MIN_RATIO) return cursor;

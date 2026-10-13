@@ -71,7 +71,7 @@ test('advance never moves backwards', () => {
   assert.equal(advance(words, 12, 'amazing grace how sweet the sound'), 12);
 });
 
-test('a repeated line resolves to the nearest occurrence ahead', () => {
+test('a window of only words just sung holds the cursor, even when they repeat ahead', () => {
   const twice = parse(`{title: Twice}
 {artist: Traditional}
 {key: G}
@@ -82,8 +82,24 @@ Amazing grace how sweet the sound
 That saved a wretch like me
 `);
   const w = buildWords(twice);
-  assert.equal(advance(w, 0, 'amazing grace how sweet the sound'), 6);
-  assert.equal(advance(w, 6, 'amazing grace how sweet the sound'), 18);
+  assert.equal(advance(w, 6, 'how sweet the sound'), 6);
+  assert.equal(advance(w, 12, 'that saved a wretch like me'), 12);
+});
+
+test('a chorus sung again after a verse moves the cursor forward', () => {
+  const chorus = parse(`{title: Chorus}
+{artist: Traditional}
+{key: G}
+
+Amazing grace how sweet the sound
+That saved a wretch like me
+I once was lost but now am found
+Was blind but now I see
+'Twas grace that taught my heart to fear
+Amazing grace how sweet the sound
+`);
+  const w = buildWords(chorus);
+  assert.equal(advance(w, 34, 'amazing grace how sweet the sound'), 40);
 });
 
 test('a window that straddles a repeated line moves to the true place, not a later repeat', () => {
