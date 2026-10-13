@@ -1,6 +1,6 @@
 import { buildWords, lyricLines, currentLine, advance, promptFor, startCursor } from './align.js';
 
-const CHUNK_MS = 5000;
+const CHUNK_MS = 6000;
 const WORKER_URL = '/transcribe';
 const PASSWORD_KEY = 'sing-password';
 const FAILURES_TO_STOP = 3;

@@ -1,6 +1,5 @@
 const API = 'https://api.infomaniak.com/1/ai';
-// 63 polls x 400 ms keeps the result ceiling near 25 s.
-const POLL_LIMIT = 63;
+const POLL_LIMIT = 25;
 
 export default {
   async fetch(request, env) {
@@ -25,7 +24,7 @@ export default {
     const batchId = unwrap(await created.json()).batch_id;
     if (!batchId) return reply(502, 'Infomaniak gave no batch id');
 
-    const pollMs = Number(env.POLL_MS ?? 400);
+    const pollMs = Number(env.POLL_MS ?? 1000);
     for (let i = 0; i < POLL_LIMIT; i++) {
       await new Promise((resolve) => setTimeout(resolve, pollMs));
       const res = await fetch(`${base}/results/${batchId}`, { headers });
