@@ -1,7 +1,7 @@
 import { buildWords, lyricLines, currentLine, advance, promptFor, startCursor } from './align.js';
 
 export const CHUNK_MS = 6000;
-const WORKER_URL = 'https://jfavrites-follow.REPLACE-ME.workers.dev/transcribe';
+const WORKER_URL = 'https://jfavrites-follow.sebastien-jeanfavre.workers.dev/transcribe';
 const PASSWORD_KEY = 'follow-password';
 const FAILURES_TO_STOP = 3;
 const MESSAGE_MS = 3000;
