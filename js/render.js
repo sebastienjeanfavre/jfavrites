@@ -12,18 +12,34 @@ export function splitLine(line) {
     const end = i + 1 < chords.length ? chords[i + 1].index : lyric.length;
     chunks.push({ chord: c.chord, text: lyric.slice(c.index, end) });
   });
+
+  // A chord often sits on the space before a word, giving its slice a leading
+  // space. Left in place it glues two chunks into one unbreakable group and a
+  // break after it would start a wrapped line with a space. Moving it back
+  // keeps every glyph at the same x and makes the boundary a legal wrap point.
+  for (let i = 1; i < chunks.length; i++) {
+    const lead = chunks[i].text.match(/^\s+/);
+    if (lead) {
+      chunks[i - 1].text += lead[0];
+      chunks[i].text = chunks[i].text.slice(lead[0].length);
+    }
+  }
   return chunks;
 }
 
 // Chunks are inline blocks, so a line can only wrap between them. Chords often
 // sit mid-word, so a chunk boundary is a legal wrap point only when the chunk
-// before it ends in whitespace.
+// before it ends in whitespace. Each chunk is first cut into words, so a long
+// chunk wraps between its words instead of moving to the next line as one box.
 export function splitWords(chunks) {
   const groups = [];
-  for (const chunk of chunks) {
-    const last = groups.at(-1)?.at(-1);
-    if (last && !/\s$/.test(last.text)) groups.at(-1).push(chunk);
-    else groups.push([chunk]);
+  for (const { chord, text } of chunks) {
+    text.split(/(?<=\S\s+)(?=\S)/).forEach((piece, i) => {
+      const chunk = { chord: i === 0 ? chord : '', text: piece };
+      const last = groups.at(-1)?.at(-1);
+      if (last && !/\s$/.test(last.text)) groups.at(-1).push(chunk);
+      else groups.push([chunk]);
+    });
   }
   return groups;
 }

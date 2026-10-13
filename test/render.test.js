@@ -62,7 +62,8 @@ test('a boundary inside a word keeps the chunks in one unbreakable group', () =>
     ],
   });
   assert.deepEqual(splitWords(chunks), [
-    [{ chord: 'Am', text: 'Dés' }, { chord: 'C', text: 'olé pour ' }],
+    [{ chord: 'Am', text: 'Dés' }, { chord: 'C', text: 'olé ' }],
+    [{ chord: '', text: 'pour ' }],
     [{ chord: 'G', text: 'hier ' }],
     [{ chord: 'D', text: 'soir' }],
   ]);
@@ -76,6 +77,17 @@ test('a boundary before a leading space does not let a wrapped line start with a
   assert.deepEqual(splitWords(chunks), [[{ chord: 'F', text: 'mai' }, { chord: 'G', text: ' son' }]]);
 });
 
-test('a chordless line is a single group', () => {
-  assert.deepEqual(splitWords([{ chord: '', text: 'la la la' }]), [[{ chord: '', text: 'la la la' }]]);
+test('a chord slice starting with whitespace folds it into the previous chunk', () => {
+  assert.deepEqual(
+    splitLine({ lyric: 'réveille comme', chords: [{ index: 8, chord: 'Eb' }] }),
+    [{ chord: '', text: 'réveille ' }, { chord: 'Eb', text: 'comme' }],
+  );
+});
+
+test('a chunk of several words wraps between its words, the chord stays on the first', () => {
+  assert.deepEqual(splitWords([{ chord: 'Cm', text: 'matin, 15 heures' }]), [
+    [{ chord: 'Cm', text: 'matin, ' }],
+    [{ chord: '', text: '15 ' }],
+    [{ chord: '', text: 'heures' }],
+  ]);
 });
