@@ -54,6 +54,7 @@ async function showSongbook() {
   const note = (text) => {
     const span = document.createElement('span');
     span.textContent = text;
+    span.setAttribute('aria-hidden', 'true');
     return span;
   };
 
