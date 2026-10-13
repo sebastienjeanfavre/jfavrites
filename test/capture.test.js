@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { RATE, resampler, ring, wav } from '../js/capture.js';
+import { RATE, resampler, ring, wav, windower } from '../js/capture.js';
 
 test('resampler turns a 44.1 kHz tone into the same tone at 16 kHz across block edges', () => {
   const inRate = 44100;
@@ -46,4 +46,19 @@ test('wav writes clipped 16-bit samples behind a 16 kHz mono header', async () =
   assert.equal(view.getUint16(34, true), 16);
   assert.equal(view.getUint32(40, true), 8);
   assert.deepEqual([0, 1, 2, 3].map((k) => view.getInt16(44 + k * 2, true)), [32767, -32767, 32767, 16384]);
+});
+
+test('two windows in a row with no new audio report one stall', () => {
+  const r = ring(4);
+  const sent = [];
+  let stalls = 0;
+  const tick = windower(r, (blob) => sent.push(blob), () => stalls++);
+  r.push(Float32Array.of(1));
+  tick();
+  tick();
+  assert.equal(stalls, 0);
+  tick();
+  tick();
+  assert.equal(stalls, 1);
+  assert.equal(sent.length, 1);
 });

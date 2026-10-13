@@ -58,13 +58,15 @@ export async function startSing(song) {
   document.getElementById('sing').classList.add('singing');
   showStatus('Listening');
   document.addEventListener('visibilitychange', onHidden);
-  context.onstatechange = () => {
-    if (session === s && context.state !== 'running') stopSing('Audio interrupted');
-  };
   paint(s);
 
   try {
-    s.stopCapture = await startCapture(context, stream, (blob) => send(s, blob));
+    s.stopCapture = await startCapture(
+      context,
+      stream,
+      (blob) => send(s, blob),
+      () => session === s && stopSing('Audio interrupted'),
+    );
   } catch {
     if (session === s) stopSing('Audio failed');
     return;

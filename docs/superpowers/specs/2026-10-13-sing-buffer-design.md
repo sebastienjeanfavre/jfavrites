@@ -112,7 +112,8 @@ Browser part:
   A worklet with no output connection may not run.
 - Before the ring is full, a window holds what the ring has. The first
   window is 3 s long. The spike showed that this still transcribes well.
-- A window with no new samples since the last one is not sent.
+- A window with no new samples since the last one is not sent. After two
+  such windows in a row, `startCapture` calls `onStall`.
 
 Constants: `RATE = 16000`, `WINDOW_MS = 6000`, `HOP_MS = 3000`.
 
@@ -136,8 +137,10 @@ Other changes:
 - Each window goes to `send()` with the file name `chunk.wav` and no prompt.
 - `stopSing` calls the capture `stop()`, closes the context, and stops the
   mic tracks.
-- If the context state changes to anything other than `running`, Sing
-  stops. This covers phone calls, Siri, and other apps that take the audio.
+- If two windows in a row bring no new audio, Sing stops with "Audio
+  interrupted". This covers phone calls, Siri, other apps that take the
+  audio, and a context that never starts. A context state check was not
+  used: iOS may report `interrupted` for a moment while the mic starts.
 - `recordChunk`, `CHUNK_MS`, the recorder, the timer and the lyric list are
   removed.
 - On each failed call, the app logs the HTTP status and the worker's error

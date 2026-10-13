@@ -1,6 +1,7 @@
 export const RATE = 16000;
 const WINDOW_MS = 6000;
 const HOP_MS = 3000;
+const STALL_WINDOWS = 2;
 
 export function resampler(inRate) {
   const step = inRate / RATE;
@@ -64,7 +65,18 @@ export function wav(samples) {
   return new Blob([view.buffer], { type: 'audio/wav' });
 }
 
-export async function startCapture(context, stream, onWindow) {
+export function windower(buffer, onWindow, onStall) {
+  let stale = 0;
+  return () => {
+    const { samples, fresh } = buffer.latest();
+    if (fresh) {
+      stale = 0;
+      onWindow(wav(samples));
+    } else if (++stale === STALL_WINDOWS) onStall();
+  };
+}
+
+export async function startCapture(context, stream, onWindow, onStall) {
   await context.audioWorklet.addModule(new URL('./capture-worklet.js', import.meta.url).href);
   const node = new AudioWorkletNode(context, 'capture');
   const source = context.createMediaStreamSource(stream);
@@ -74,10 +86,7 @@ export async function startCapture(context, stream, onWindow) {
   source.connect(node);
   // A worklet with no output connection may not run.
   node.connect(context.destination);
-  const timer = setInterval(() => {
-    const { samples, fresh } = buffer.latest();
-    if (fresh) onWindow(wav(samples));
-  }, HOP_MS);
+  const timer = setInterval(windower(buffer, onWindow, onStall), HOP_MS);
   return () => {
     clearInterval(timer);
     node.port.onmessage = null;
