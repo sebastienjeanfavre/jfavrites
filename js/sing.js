@@ -2,7 +2,7 @@ import { buildWords, lyricLines, currentLine, advance, promptFor, startCursor } 
 
 const CHUNK_MS = 6000;
 const WORKER_URL = '/transcribe';
-const PASSWORD_KEY = 'follow-password';
+const PASSWORD_KEY = 'sing-password';
 const FAILURES_TO_STOP = 3;
 const MESSAGE_MS = 3000;
 const SCROLL_FROM_TOP = 0.3;
@@ -10,12 +10,12 @@ const SCROLL_FROM_TOP = 0.3;
 let session = null;
 let generation = 0;
 
-export function isFollowing() {
+export function isSinging() {
   return session !== null;
 }
 
-export async function startFollow(song) {
-  const password = localStorage.getItem(PASSWORD_KEY) || prompt('Follow password');
+export async function startSing(song) {
+  const password = localStorage.getItem(PASSWORD_KEY) || prompt('Password');
   if (!password) return;
   localStorage.setItem(PASSWORD_KEY, password);
 
@@ -49,14 +49,14 @@ export async function startFollow(song) {
     timer: 0,
     lock: navigator.wakeLock ? navigator.wakeLock.request('screen').catch(() => null) : Promise.resolve(null),
   };
-  document.getElementById('follow').textContent = 'Stop';
+  document.getElementById('sing').textContent = 'Stop';
   showStatus('Listening');
   document.addEventListener('visibilitychange', onHidden);
   paint(session);
   recordChunk(session);
 }
 
-export function stopFollow(message = '') {
+export function stopSing(message = '') {
   generation++;
   if (!session) return;
   const s = session;
@@ -66,7 +66,7 @@ export function stopFollow(message = '') {
   s.stream.getTracks().forEach((track) => track.stop());
   s.lock.then((lock) => lock?.release());
   document.removeEventListener('visibilitychange', onHidden);
-  document.getElementById('follow').textContent = 'Follow';
+  document.getElementById('sing').textContent = 'Sing';
   showStatus(message, MESSAGE_MS);
 }
 
@@ -75,7 +75,7 @@ export function repaint() {
 }
 
 function onHidden() {
-  if (document.hidden) stopFollow();
+  if (document.hidden) stopSing();
 }
 
 // Safari cannot split one recording into standalone files, so each chunk is its own recorder.
@@ -113,7 +113,7 @@ async function send(s, blob) {
   if (session !== s) return;
   if (res.status === 401) {
     localStorage.removeItem(PASSWORD_KEY);
-    stopFollow('Wrong password');
+    stopSing('Wrong password');
     return;
   }
   if (!res.ok) {
@@ -131,17 +131,17 @@ async function send(s, blob) {
   if (session !== s) return;
   s.failures = 0;
   const next = advance(s.words, s.cursor, text);
-  console.log(`[follow] "${text}" cursor ${s.cursor} -> ${next}`);
+  console.log(`[sing] "${text}" cursor ${s.cursor} -> ${next}`);
   if (next <= s.cursor) return;
   s.cursor = next;
   paint(s);
-  if (currentLine(s.words, s.cursor) === s.words.at(-1).line) stopFollow();
+  if (currentLine(s.words, s.cursor) === s.words.at(-1).line) stopSing();
 }
 
 function failed(s) {
   if (session !== s) return;
   s.failures++;
-  if (s.failures >= FAILURES_TO_STOP) stopFollow('Transcription failed');
+  if (s.failures >= FAILURES_TO_STOP) stopSing('Transcription failed');
 }
 
 function paint(s) {

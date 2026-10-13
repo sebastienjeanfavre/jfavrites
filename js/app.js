@@ -1,7 +1,7 @@
 import { parse } from './chordpro.js';
 import { renderSong } from './render.js';
 import { transposeKey } from './transpose.js';
-import { startFollow, stopFollow, isFollowing, repaint } from './follow.js';
+import { startSing, stopSing, isSinging, repaint } from './sing.js';
 
 const main = document.getElementById('main');
 const heading = document.getElementById('heading');
@@ -33,7 +33,7 @@ function go(slug, offset) {
 async function showSongbook() {
   const id = ++request;
   onScreen = null;
-  stopFollow();
+  stopSing();
   controls.hidden = true;
   back.hidden = true;
   heading.textContent = 'JFavrites';
@@ -72,7 +72,7 @@ async function showSongbook() {
 
 function showNotFound() {
   onScreen = null;
-  stopFollow();
+  stopSing();
   controls.hidden = true;
   back.hidden = false;
   heading.textContent = 'Not found';
@@ -90,7 +90,7 @@ function showNotFound() {
 async function showSong(slug, offset) {
   const id = ++request;
   const isNewSong = onScreen !== slug;
-  if (isNewSong) stopFollow();
+  if (isNewSong) stopSing();
   if (loaded.slug !== slug) {
     let text;
     try {
@@ -132,9 +132,9 @@ document.getElementById('down').addEventListener('click', () => {
   go(slug, offset - 1);
 });
 
-document.getElementById('follow').addEventListener('click', () => {
-  if (isFollowing()) stopFollow();
-  else startFollow(loaded.song);
+document.getElementById('sing').addEventListener('click', () => {
+  if (isSinging()) stopSing();
+  else startSing(loaded.song);
 });
 
 shareBtn.addEventListener('click', async () => {

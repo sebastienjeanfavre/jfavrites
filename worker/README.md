@@ -1,7 +1,7 @@
 # Worker
 
 Serves the app as static files from the repo root and proxies one audio chunk
-at a time to Infomaniak's Whisper transcription for the Follow feature. It
+at a time to Infomaniak's Whisper transcription for the Sing feature. It
 holds the Infomaniak token so the browser never sees it. `.assetsignore` at the
 repo root lists what stays out of the upload.
 
