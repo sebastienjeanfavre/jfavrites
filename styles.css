@@ -105,7 +105,9 @@ h2 {
   opacity: 0.55;
 }
 
-.line { margin: 0 0 0.4rem; }
+/* Fading rather than snapping: the cursor often advances several lines at once
+   when a transcription lands late. */
+.line { margin: 0 0 0.4rem; transition: opacity 0.5s; }
 
 .chunk {
   display: inline-block;
@@ -146,13 +148,3 @@ h2 {
 }
 
 .sung { opacity: 0.4; }
-
-.current {
-  margin-left: -0.6rem;
-  padding-left: 0.4rem;
-  border-left: 3px solid #b4531f;
-}
-
-@media (prefers-color-scheme: dark) {
-  .current { border-color: #f0a35e; }
-}
