@@ -4,7 +4,7 @@ const CHORD_TOKEN_RE = /\[([^\]]+)\]/g;
 const CHORD_TO_KEY_RE = /^([A-G][#b]?)(m(?!aj))?/;
 
 export function parse(text) {
-  const song = { title: '', artist: '', key: '', styles: [], sections: [] };
+  const song = { title: '', artist: '', key: '', language: '', styles: [], sections: [] };
   let section = null;
 
   for (const raw of text.split('\n')) {
@@ -43,6 +43,7 @@ function applyDirective(song, name, value, startSection) {
   else if (name === 'meta') {
     const [metaName, ...rest] = value.split(/\s+/);
     if (metaName === 'style' && rest.length) song.styles.push(rest.join(' '));
+    else if (metaName === 'language' && rest.length) song.language = rest[0];
   }
 }
 

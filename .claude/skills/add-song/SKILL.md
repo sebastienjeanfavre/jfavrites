@@ -70,6 +70,7 @@ then spaces replaced by hyphens: `Il faut que je m'en aille` →
 {title: <title>}
 {artist: <artist>}
 {key: <key>}
+{meta: language <fr|en>}
 {meta: style <tag>}
 
 {comment: Verse}
@@ -96,8 +97,9 @@ looked at it.
 ## Rules
 
 - **Valid ChordPro only.** This songbook uses `{title:}`, `{artist:}`, `{key:}`,
-  `{comment:}` and `{meta: style ...}`. Never invent a directive. `{meta: style
-  ...}` is the only custom metadata this app reads — other `{meta:}` names are
+  `{comment:}`, `{meta: language ...}` and `{meta: style ...}`. Never invent a
+  directive. `language` is the two-letter code of the sung language, `fr` or
+  `en`; the app sends it to the transcription service. Other `{meta:}` names are
   valid ChordPro but are parsed and silently ignored here.
 - **One `{meta: style ...}` per tag.** Repeated directives with the same name
   collect into a list; do not comma-separate values on one line.

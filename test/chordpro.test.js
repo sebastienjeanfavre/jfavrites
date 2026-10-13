@@ -85,3 +85,11 @@ test('{soc}/{eoc} around a section leave the lyrics intact', () => {
   const allLyrics = s.sections.flatMap((sec) => sec.lines.map((l) => l.lyric));
   assert.deepEqual(allLyrics, ['hello world']);
 });
+
+test('meta language sets the song language', () => {
+  assert.equal(parse('{meta: language fr}\n').language, 'fr');
+});
+
+test('language is empty when no directive gives it', () => {
+  assert.equal(parse(SONG).language, '');
+});
