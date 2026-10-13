@@ -1,7 +1,9 @@
-# Follow worker
+# Worker
 
-Proxies one audio chunk at a time to Infomaniak's Whisper transcription for the
-Follow feature. It holds the Infomaniak token so the browser never sees it.
+Serves the app as static files from the repo root and proxies one audio chunk
+at a time to Infomaniak's Whisper transcription for the Follow feature. It
+holds the Infomaniak token so the browser never sees it. `.assetsignore` at the
+repo root lists what stays out of the upload.
 
 Deploy from this folder:
 
@@ -11,7 +13,6 @@ Deploy from this folder:
     npx wrangler secret put FOLLOW_PASSWORD
     npx wrangler deploy
 
-`wrangler deploy` prints the worker URL. Put it in `WORKER_URL` in `js/follow.js`.
-
-The product id comes from `GET https://api.infomaniak.com/1/ai` with the token
-as a bearer header.
+One `wrangler deploy` ships the app and the worker together. The product id
+comes from `GET https://api.infomaniak.com/1/ai` with the token as a bearer
+header.

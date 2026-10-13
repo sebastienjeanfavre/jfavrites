@@ -38,6 +38,9 @@ a song.
 - **The proxy is a Cloudflare Worker.** One file, free tier, deployed separately.
   A Netlify Function would need git-connected deploys; the app stays a dragged
   folder.
+- **The worker also serves the app** as static assets from the repo root, so
+  page and proxy share one origin and one deploy. CORS is not needed. Netlify
+  is retired.
 - **The password is a short shared secret**, not the API token. It is typed
   once on the phone and stored in `localStorage`.
 

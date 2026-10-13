@@ -1,14 +1,8 @@
 const API = 'https://api.infomaniak.com/1/ai';
 const POLL_LIMIT = 25;
-const CORS = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-Password',
-};
 
 export default {
   async fetch(request, env) {
-    if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });
     if (request.method !== 'POST' || new URL(request.url).pathname !== '/transcribe') {
       return reply(404, 'Not found');
     }
@@ -59,6 +53,6 @@ function reply(status, payload) {
   const body = typeof payload === 'string' ? { error: payload } : payload;
   return new Response(JSON.stringify(body), {
     status,
-    headers: { ...CORS, 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json' },
   });
 }

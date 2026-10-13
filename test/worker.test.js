@@ -93,16 +93,3 @@ test('a rejected upload gives 502', async () => {
   const res = await worker.fetch(request(), env);
   assert.equal(res.status, 502);
 });
-
-test('a preflight gets the CORS headers', async () => {
-  const res = await worker.fetch(new Request('https://w/transcribe', { method: 'OPTIONS' }), env);
-  assert.equal(res.status, 204);
-  assert.equal(res.headers.get('Access-Control-Allow-Origin'), '*');
-  assert.match(res.headers.get('Access-Control-Allow-Headers'), /X-Password/);
-});
-
-test('every JSON reply carries the CORS origin header', async () => {
-  mockFetch([]);
-  const res = await worker.fetch(request('nope'), env);
-  assert.equal(res.headers.get('Access-Control-Allow-Origin'), '*');
-});

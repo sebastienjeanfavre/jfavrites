@@ -1,0 +1,9 @@
+.git
+.claude
+.superpowers
+.DS_Store
+.gitignore
+docs
+test
+worker
+package.json
