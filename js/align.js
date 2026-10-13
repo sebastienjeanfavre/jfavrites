@@ -1,8 +1,8 @@
-export const LOOKAHEAD = 60;
-export const MIN_MATCH = 3;
-export const MIN_RATIO = 0.4;
-export const MAX_HEARD = 40;
-export const PROMPT_WORDS = 150;
+const LOOKAHEAD = 60;
+const MIN_MATCH = 3;
+const MIN_RATIO = 0.4;
+const MAX_HEARD = 40;
+const PROMPT_WORDS = 150;
 
 export function normalise(text) {
   return text

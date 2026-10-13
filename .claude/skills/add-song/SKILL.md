@@ -52,14 +52,7 @@ and without numbers, whatever the source says:
 Merge two `Instrumental` sections that follow each other into one. If the sheet says to use a capo, keep the
 chords as written and add `{comment: Capo N}` at the top.
 
-### 3. Propose style tags
-
-Read every `{meta: style ...}` value already used across `songs/*.chordpro` and
-show that list. Propose tags for this song, preferring an existing tag over a new
-near-duplicate — `folk`, `folk-rock` and `Folk` as three separate tags is the
-failure to avoid. Confirm before writing.
-
-### 4. Write the files
+### 3. Write the files
 
 Write `songs/<slug>.chordpro`. The slug is the title with accents removed
 (`é` → `e`), lowercased, everything except letters, digits and spaces removed,
@@ -71,7 +64,6 @@ then spaces replaced by hyphens: `Il faut que je m'en aille` →
 {artist: <artist>}
 {key: <key>}
 {meta: language <fr|en>}
-{meta: style <tag>}
 
 {comment: Verse}
 <lyrics with inline chords>
@@ -84,12 +76,11 @@ Then insert the song into `songs/index.json`, keeping the array sorted by title:
   "slug": "<slug>",
   "title": "<title>",
   "artist": "<artist>",
-  "key": "<key>",
-  "styles": ["<tag>"]
+  "key": "<key>"
 }
 ```
 
-### 5. Show the result
+### 4. Show the result
 
 Print the finished ChordPro file. Do not commit — leave that to a human who has
 looked at it.
@@ -97,12 +88,10 @@ looked at it.
 ## Rules
 
 - **Valid ChordPro only.** This songbook uses `{title:}`, `{artist:}`, `{key:}`,
-  `{comment:}`, `{meta: language ...}` and `{meta: style ...}`. Never invent a
-  directive. `language` is the two-letter code of the sung language, `fr` or
-  `en`; the app sends it to the transcription service. Other `{meta:}` names are
-  valid ChordPro but are parsed and silently ignored here.
-- **One `{meta: style ...}` per tag.** Repeated directives with the same name
-  collect into a list; do not comma-separate values on one line.
+  `{comment:}` and `{meta: language ...}`. Never invent a directive. `language`
+  is the two-letter code of the sung language, `fr` or `en`; the app sends it
+  to the transcription service. Other `{meta:}` names are valid ChordPro but
+  are parsed and silently ignored here.
 - **Do not transpose the source.** Store the song in whatever key it was written
   in and record that in `{key:}`. The app transposes at read time.
 - **Chords use letter names.** Preserve spelling as written, including slash

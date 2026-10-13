@@ -5,8 +5,6 @@ import { parse } from '../js/chordpro.js';
 const SONG = `{title: Amazing Grace}
 {artist: Traditional}
 {key: G}
-{meta: style traditional}
-{meta: style singalong}
 
 {comment: Verse 1}
 A[G]mazing grace how [G7]sweet the [C]sound
@@ -15,12 +13,7 @@ A[G]mazing grace how [G7]sweet the [C]sound
 test('parses the metadata directives', () => {
   const s = parse(SONG);
   assert.equal(s.title, 'Amazing Grace');
-  assert.equal(s.artist, 'Traditional');
   assert.equal(s.key, 'G');
-});
-
-test('repeated meta style directives collect into a list', () => {
-  assert.deepEqual(parse(SONG).styles, ['traditional', 'singalong']);
 });
 
 test('chords carry their character index into the lyric', () => {

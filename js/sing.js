@@ -131,7 +131,6 @@ async function send(s, blob) {
   if (session !== s) return;
   s.failures = 0;
   const next = advance(s.words, s.cursor, text);
-  console.log(`[sing] "${text}" cursor ${s.cursor} -> ${next}`);
   if (next <= s.cursor) return;
   s.cursor = next;
   paint(s);

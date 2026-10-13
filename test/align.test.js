@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { parse } from '../js/chordpro.js';
 import {
-  normalise, buildWords, lyricLines, currentLine, advance, promptFor, startCursor, PROMPT_WORDS,
+  normalise, buildWords, lyricLines, currentLine, advance, promptFor, startCursor,
 } from '../js/align.js';
 
 const song = parse(`{title: Amazing Grace}
@@ -111,10 +111,10 @@ test('promptFor starts one line before the current line and skips empty lines', 
   assert.equal(promptFor(lines, 3).split('\n')[0], 'That saved a wretch like me');
 });
 
-test('promptFor stops once it holds about PROMPT_WORDS words', () => {
+test('promptFor stops once it holds about 150 words', () => {
   const lines = Array.from({ length: 100 }, () => 'one two three four five');
   const count = promptFor(lines, 0).split(/\s+/).length;
-  assert.equal(count, PROMPT_WORDS);
+  assert.equal(count, 150);
 });
 
 test('a transcript that echoes the prompt holds the cursor', () => {

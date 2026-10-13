@@ -70,19 +70,19 @@ async function showSongbook() {
   main.append(ul);
 }
 
-function showNotFound() {
+function showNotice(title, message) {
   onScreen = null;
   stopSing();
   controls.hidden = true;
   back.hidden = false;
-  heading.textContent = 'Not found';
+  heading.textContent = title;
 
   const link = document.createElement('a');
   link.href = '#';
   link.textContent = 'Back to the songbook';
 
   const p = document.createElement('p');
-  p.append('Song not found. ', link);
+  p.append(`${message} `, link);
 
   main.replaceChildren(p);
 }
@@ -92,17 +92,19 @@ async function showSong(slug, offset) {
   const isNewSong = onScreen !== slug;
   if (isNewSong) stopSing();
   if (loaded.slug !== slug) {
-    let text;
+    let res;
     try {
-      const res = await fetch(`songs/${slug}.chordpro`);
-      if (!res.ok) throw new Error('404');
-      text = await res.text();
+      res = await fetch(`songs/${slug}.chordpro`);
     } catch {
-      if (id === request) showNotFound();
+      if (id === request) showNotice('Offline', 'Could not load the song.');
+      return;
+    }
+    if (!res.ok) {
+      if (id === request) showNotice('Not found', 'Song not found.');
       return;
     }
     if (id !== request) return;
-    loaded = { slug, song: parse(text) };
+    loaded = { slug, song: parse(await res.text()) };
   }
 
   const { song } = loaded;
