@@ -82,7 +82,7 @@ test('a failed job gives 502', async () => {
 test('a job still pending after the poll limit gives 502', async () => {
   mockFetch([
     { body: { batch_id: 'b1' } },
-    ...Array.from({ length: 30 }, () => ({ body: { status: 'pending', data: null } })),
+    ...Array.from({ length: 70 }, () => ({ body: { status: 'pending', data: null } })),
   ]);
   const res = await worker.fetch(request(), env);
   assert.equal(res.status, 502);

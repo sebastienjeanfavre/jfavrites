@@ -1,6 +1,6 @@
 import { buildWords, lyricLines, currentLine, advance, promptFor, startCursor } from './align.js';
 
-const CHUNK_MS = 6000;
+const CHUNK_MS = 5000;
 const WORKER_URL = '/transcribe';
 const PASSWORD_KEY = 'sing-password';
 const FAILURES_TO_STOP = 3;
@@ -80,7 +80,7 @@ function onHidden() {
 
 // Safari cannot split one recording into standalone files, so each chunk is its own recorder.
 function recordChunk(s) {
-  const recorder = new MediaRecorder(s.stream);
+  const recorder = new MediaRecorder(s.stream, { audioBitsPerSecond: 24000 });
   const parts = [];
   recorder.ondataavailable = (e) => parts.push(e.data);
   recorder.onstop = () => {
