@@ -1,6 +1,7 @@
 export const LOOKAHEAD = 60;
 export const MIN_MATCH = 3;
 export const MIN_RATIO = 0.4;
+export const MAX_HEARD = 40;
 export const PROMPT_WORDS = 150;
 
 export function normalise(text) {
@@ -34,9 +35,14 @@ export function currentLine(words, cursor) {
   return words[Math.min(cursor, words.length - 1)].line;
 }
 
+export function startCursor(words, line) {
+  return Math.max(0, words.findIndex((w) => w.line >= line));
+}
+
+// Whisper echoes the prompt back over guitar-only audio; nobody sings 40 words in a chunk.
 export function advance(words, cursor, transcript) {
   const heard = normalise(transcript);
-  if (heard.length === 0) return cursor;
+  if (heard.length === 0 || heard.length > MAX_HEARD) return cursor;
 
   const span = Math.ceil(heard.length * 1.5);
   const end = Math.min(words.length, cursor + LOOKAHEAD);
@@ -63,7 +69,7 @@ export function promptFor(lyrics, line) {
   return out.join('\n');
 }
 
-// Longest common subsequence; `last` is the index in b of the final matched word.
+// Longest common subsequence; `last` is the earliest index in b at which the full count is reached.
 function lcs(a, b) {
   const n = a.length;
   const m = b.length;
@@ -75,13 +81,7 @@ function lcs(a, b) {
         : Math.max(dp[i - 1][j], dp[i][j - 1]);
     }
   }
-  let i = n;
   let j = m;
-  let last = -1;
-  while (i > 0 && j > 0 && last < 0) {
-    if (a[i - 1] === b[j - 1]) last = j - 1;
-    else if (dp[i - 1][j] >= dp[i][j - 1]) i--;
-    else j--;
-  }
-  return { count: dp[n][m], last };
+  while (j > 0 && dp[n][j - 1] === dp[n][m]) j--;
+  return { count: dp[n][m], last: j - 1 };
 }

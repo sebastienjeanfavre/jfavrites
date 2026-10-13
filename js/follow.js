@@ -1,4 +1,4 @@
-import { buildWords, lyricLines, currentLine, advance, promptFor } from './align.js';
+import { buildWords, lyricLines, currentLine, advance, promptFor, startCursor } from './align.js';
 
 export const CHUNK_MS = 6000;
 const WORKER_URL = 'https://jfavrites-follow.REPLACE-ME.workers.dev/transcribe';
@@ -29,11 +29,13 @@ export async function startFollow(song) {
     return;
   }
 
+  const bar = document.getElementById('bar').offsetHeight;
+  const top = [...document.querySelectorAll('p.line')].find((p) => p.getBoundingClientRect().bottom > bar);
   session = {
     words,
     lyrics: lyricLines(song),
     language: song.language,
-    cursor: 0,
+    cursor: startCursor(words, Number(top?.dataset.line ?? 0)),
     line: -1,
     failures: 0,
     stream,

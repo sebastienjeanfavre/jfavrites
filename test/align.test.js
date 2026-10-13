@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { parse } from '../js/chordpro.js';
 import {
-  normalise, buildWords, lyricLines, currentLine, advance, promptFor, PROMPT_WORDS,
+  normalise, buildWords, lyricLines, currentLine, advance, promptFor, startCursor, PROMPT_WORDS,
 } from '../js/align.js';
 
 const song = parse(`{title: Amazing Grace}
@@ -115,4 +115,26 @@ test('promptFor stops once it holds about PROMPT_WORDS words', () => {
   const lines = Array.from({ length: 100 }, () => 'one two three four five');
   const count = promptFor(lines, 0).split(/\s+/).length;
   assert.equal(count, PROMPT_WORDS);
+});
+
+test('a transcript that echoes the prompt holds the cursor', () => {
+  assert.equal(advance(words, 0, promptFor(lyricLines(song), 1)), 0);
+});
+
+test('a repeated phrase consumes only as many repetitions as were sung', () => {
+  const boat = parse(`{title: Row Your Boat}
+{artist: Traditional}
+{key: C}
+
+Row row row your boat gently down the stream
+Merrily merrily merrily merrily life is but a dream
+`);
+  const w = buildWords(boat);
+  assert.equal(advance(w, 9, 'merrily merrily merrily'), 12);
+});
+
+test('startCursor is the first word of the given line, or zero when no line is ahead', () => {
+  assert.equal(startCursor(words, 0), 0);
+  assert.equal(startCursor(words, 5), 26);
+  assert.equal(startCursor(words, 99), 0);
 });
