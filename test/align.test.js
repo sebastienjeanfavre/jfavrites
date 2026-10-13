@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { parse } from '../js/chordpro.js';
 import {
-  normalise, buildWords, lyricLines, currentLine, advance, promptFor, startCursor,
+  normalise, buildWords, currentLine, advance, startCursor,
 } from '../js/align.js';
 
 const song = parse(`{title: Amazing Grace}
@@ -43,12 +43,6 @@ test('chord-only lines add no words but keep their line number', () => {
     { word: 'grace', line: 1 },
   ]);
   assert.equal(words.length, 50);
-});
-
-test('lyricLines keeps one entry per rendered line', () => {
-  const lines = lyricLines(song);
-  assert.equal(lines.length, 9);
-  assert.equal(lines[1], 'Amazing grace how sweet the sound');
 });
 
 test('currentLine is the line of the next expected word, clamped at the end', () => {
@@ -124,21 +118,9 @@ test('advance ignores an empty transcript', () => {
   assert.equal(advance(words, 6, '  ...  '), 6);
 });
 
-test('promptFor starts one line before the current line and skips empty lines', () => {
-  const lines = lyricLines(song);
-  assert.equal(promptFor(lines, 1).split('\n')[0], 'Amazing grace how sweet the sound');
-  assert.equal(promptFor(lines, 2).split('\n')[0], 'Amazing grace how sweet the sound');
-  assert.equal(promptFor(lines, 3).split('\n')[0], 'That saved a wretch like me');
-});
-
-test('promptFor stops once it holds about 150 words', () => {
-  const lines = Array.from({ length: 100 }, () => 'one two three four five');
-  const count = promptFor(lines, 0).split(/\s+/).length;
-  assert.equal(count, 150);
-});
-
-test('a transcript that echoes the prompt holds the cursor', () => {
-  assert.equal(advance(words, 0, promptFor(lyricLines(song), 1)), 0);
+test('a transcript longer than anyone sings in one window holds the cursor', () => {
+  const tooLong = words.slice(0, 41).map((w) => w.word).join(' ');
+  assert.equal(advance(words, 0, tooLong), 0);
 });
 
 test('a repeated phrase consumes only as many repetitions as were sung', () => {

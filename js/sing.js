@@ -1,6 +1,6 @@
-import { buildWords, lyricLines, currentLine, advance, promptFor, startCursor } from './align.js';
+import { buildWords, currentLine, advance, startCursor } from './align.js';
+import { startCapture } from './capture.js';
 
-const CHUNK_MS = 6000;
 const WORKER_URL = '/transcribe';
 const PASSWORD_KEY = 'sing-password';
 const FAILURES_TO_STOP = 3;
@@ -23,38 +23,53 @@ export async function startSing(song) {
   if (words.length === 0) return;
 
   const started = generation;
+  // iOS starts audio only from a tap, so the context must exist before the first await.
+  const context = new AudioContext();
+  context.resume();
   let stream;
   try {
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   } catch {
+    context.close();
     showStatus('Microphone blocked', MESSAGE_MS);
     return;
   }
   if (session || started !== generation) {
+    context.close();
     stream.getTracks().forEach((track) => track.stop());
     return;
   }
 
   const bar = document.getElementById('bar').offsetHeight;
   const top = [...document.querySelectorAll('p.line')].find((p) => p.getBoundingClientRect().bottom > bar);
-  session = {
+  const s = {
     words,
-    lyrics: lyricLines(song),
     language: song.language,
     cursor: startCursor(words, Number(top?.dataset.line ?? 0)),
     line: -1,
     failures: 0,
     stream,
-    recorder: null,
-    timer: 0,
+    context,
+    stopCapture: null,
     lock: navigator.wakeLock ? navigator.wakeLock.request('screen').catch(() => null) : Promise.resolve(null),
   };
+  session = s;
   document.getElementById('sing').textContent = 'Stop';
   document.getElementById('sing').classList.add('singing');
   showStatus('Listening');
   document.addEventListener('visibilitychange', onHidden);
-  paint(session);
-  recordChunk(session);
+  context.onstatechange = () => {
+    if (session === s && context.state !== 'running') stopSing('Audio interrupted');
+  };
+  paint(s);
+
+  try {
+    s.stopCapture = await startCapture(context, stream, (blob) => send(s, blob));
+  } catch {
+    if (session === s) stopSing('Audio failed');
+    return;
+  }
+  if (session !== s) s.stopCapture();
 }
 
 export function stopSing(message = '') {
@@ -62,8 +77,8 @@ export function stopSing(message = '') {
   if (!session) return;
   const s = session;
   session = null;
-  clearTimeout(s.timer);
-  if (s.recorder?.state === 'recording') s.recorder.stop();
+  s.stopCapture?.();
+  s.context.close();
   s.stream.getTracks().forEach((track) => track.stop());
   s.lock.then((lock) => lock?.release());
   document.removeEventListener('visibilitychange', onHidden);
@@ -80,26 +95,10 @@ function onHidden() {
   if (document.hidden) stopSing();
 }
 
-// Safari cannot split one recording into standalone files, so each chunk is its own recorder.
-function recordChunk(s) {
-  const recorder = new MediaRecorder(s.stream);
-  const parts = [];
-  recorder.ondataavailable = (e) => parts.push(e.data);
-  recorder.onstop = () => {
-    if (session !== s) return;
-    send(s, new Blob(parts, { type: recorder.mimeType }));
-    recordChunk(s);
-  };
-  s.recorder = recorder;
-  recorder.start();
-  s.timer = setTimeout(() => recorder.stop(), CHUNK_MS);
-}
-
 async function send(s, blob) {
   const form = new FormData();
-  form.set('file', blob, blob.type.includes('webm') ? 'chunk.webm' : 'chunk.mp4');
+  form.set('file', blob, 'chunk.wav');
   if (s.language) form.set('language', s.language);
-  form.set('prompt', promptFor(s.lyrics, currentLine(s.words, s.cursor)));
 
   let res;
   try {
@@ -119,6 +118,7 @@ async function send(s, blob) {
     return;
   }
   if (!res.ok) {
+    console.warn('[sing]', res.status, await res.text());
     failed(s);
     return;
   }

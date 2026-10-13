@@ -3,7 +3,6 @@ const LOOKBACK = 20;
 const MIN_MATCH = 3;
 const MIN_RATIO = 0.4;
 const MAX_HEARD = 40;
-const PROMPT_WORDS = 150;
 
 export function normalise(text) {
   return text
@@ -28,10 +27,6 @@ export function buildWords(song) {
   return words;
 }
 
-export function lyricLines(song) {
-  return song.sections.flatMap((section) => section.lines.map((line) => line.lyric));
-}
-
 export function currentLine(words, cursor) {
   return words[Math.min(cursor, words.length - 1)].line;
 }
@@ -40,7 +35,7 @@ export function startCursor(words, line) {
   return Math.max(0, words.findIndex((w) => w.line >= line));
 }
 
-// Whisper echoes the prompt back over guitar-only audio; nobody sings 40 words in a chunk.
+// Nobody sings 40 words in a 6 s window; longer text is Whisper hallucinating over the guitar.
 export function advance(words, cursor, transcript) {
   const heard = normalise(transcript);
   if (heard.length === 0 || heard.length > MAX_HEARD) return cursor;
@@ -59,18 +54,6 @@ export function advance(words, cursor, transcript) {
 
   if (best.count < MIN_MATCH || best.count < heard.length * MIN_RATIO) return cursor;
   return Math.max(cursor, best.last + 1);
-}
-
-export function promptFor(lyrics, line) {
-  const out = [];
-  let count = 0;
-  for (let i = Math.max(0, line - 1); i < lyrics.length && count < PROMPT_WORDS; i++) {
-    const text = lyrics[i].trim();
-    if (!text) continue;
-    out.push(text);
-    count += text.split(/\s+/).length;
-  }
-  return out.join('\n');
 }
 
 // Longest common subsequence; `last` is the earliest index in b at which the full count is reached.
