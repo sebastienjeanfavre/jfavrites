@@ -16,3 +16,5 @@ Deploy from this folder:
 One `wrangler deploy` ships the app and the worker together. The product id
 comes from `GET https://api.infomaniak.com/1/ai` with the token as a bearer
 header.
+
+A push to `main` deploys automatically.
