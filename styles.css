@@ -202,23 +202,9 @@ h2 {
   border-bottom: 1px solid var(--rule);
 }
 
-.current {
-  background: rgba(224, 123, 90, 0.18);
-  border-radius: 6px;
-  margin: 0 -9px;
-  padding: 0.15rem 9px;
-}
-
-.next {
-  background: rgba(224, 123, 90, 0.07);
-  border-radius: 6px;
-  margin: 0 -9px;
-  padding: 0.15rem 9px;
-}
-
 /* Fading rather than snapping: the cursor often advances several lines at once
    when a transcription lands late. */
-.line { margin: 0 0 0.4rem; transition: opacity 0.5s, background 0.5s; }
+.line { margin: 0 0 0.4rem; transition: opacity 0.5s; }
 
 .chunk {
   display: inline-block;
