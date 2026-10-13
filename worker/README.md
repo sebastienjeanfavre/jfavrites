@@ -10,7 +10,7 @@ Deploy from this folder:
     npx wrangler login
     npx wrangler secret put INFOMANIAK_TOKEN
     npx wrangler secret put INFOMANIAK_PRODUCT_ID
-    npx wrangler secret put FOLLOW_PASSWORD
+    npx wrangler secret put SING_PASSWORD
     npx wrangler deploy
 
 One `wrangler deploy` ships the app and the worker together. The product id

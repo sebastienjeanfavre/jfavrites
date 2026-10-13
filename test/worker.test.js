@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import worker from '../worker/index.js';
 
-const env = { FOLLOW_PASSWORD: 'pw', INFOMANIAK_TOKEN: 't', INFOMANIAK_PRODUCT_ID: '7', POLL_MS: 0 };
+const env = { SING_PASSWORD: 'pw', INFOMANIAK_TOKEN: 't', INFOMANIAK_PRODUCT_ID: '7', POLL_MS: 0 };
 const BASE = 'https://api.infomaniak.com/1/ai/7';
 
 function request(password = 'pw') {

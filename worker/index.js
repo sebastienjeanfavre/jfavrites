@@ -6,7 +6,7 @@ export default {
     if (request.method !== 'POST' || new URL(request.url).pathname !== '/transcribe') {
       return reply(404, 'Not found');
     }
-    if (request.headers.get('X-Password') !== env.FOLLOW_PASSWORD) return reply(401, 'Wrong password');
+    if (request.headers.get('X-Password') !== env.SING_PASSWORD) return reply(401, 'Wrong password');
 
     const form = await request.formData();
     const body = new FormData();
