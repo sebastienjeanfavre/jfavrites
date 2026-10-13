@@ -136,3 +136,23 @@ h2 {
 @media (prefers-color-scheme: dark) {
   .chord { color: #f0a35e; }
 }
+
+#status {
+  margin: 0;
+  padding: 0.25rem var(--pad);
+  font-size: 0.85rem;
+  opacity: 0.7;
+  border-bottom: 1px solid var(--rule);
+}
+
+.sung { opacity: 0.4; }
+
+.current {
+  margin-left: -0.6rem;
+  padding-left: 0.4rem;
+  border-left: 3px solid #b4531f;
+}
+
+@media (prefers-color-scheme: dark) {
+  .current { border-color: #f0a35e; }
+}

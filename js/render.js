@@ -18,6 +18,7 @@ export function splitLine(line) {
 export function renderSong(song, semitones) {
   const flats = prefersFlats(transposeKey(song.key, semitones));
   const frag = document.createDocumentFragment();
+  let index = 0;
 
   for (const section of song.sections) {
     const el = document.createElement('section');
@@ -27,16 +28,17 @@ export function renderSong(song, semitones) {
       el.append(h);
     }
     for (const line of section.lines) {
-      el.append(renderLine(line, semitones, flats));
+      el.append(renderLine(line, index++, semitones, flats));
     }
     frag.append(el);
   }
   return frag;
 }
 
-function renderLine(line, semitones, flats) {
+function renderLine(line, index, semitones, flats) {
   const p = document.createElement('p');
   p.className = 'line';
+  p.dataset.line = index;
   for (const chunk of splitLine(line)) {
     const span = document.createElement('span');
     span.className = 'chunk';

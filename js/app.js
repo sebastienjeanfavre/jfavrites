@@ -1,6 +1,7 @@
 import { parse } from './chordpro.js';
 import { renderSong } from './render.js';
 import { transposeKey } from './transpose.js';
+import { startFollow, stopFollow, isFollowing, repaint } from './follow.js';
 
 const main = document.getElementById('main');
 const heading = document.getElementById('heading');
@@ -32,6 +33,7 @@ function go(slug, offset) {
 async function showSongbook() {
   const id = ++request;
   onScreen = null;
+  stopFollow();
   controls.hidden = true;
   back.hidden = true;
   heading.textContent = 'JFavrites';
@@ -70,6 +72,7 @@ async function showSongbook() {
 
 function showNotFound() {
   onScreen = null;
+  stopFollow();
   controls.hidden = true;
   back.hidden = false;
   heading.textContent = 'Not found';
@@ -87,6 +90,7 @@ function showNotFound() {
 async function showSong(slug, offset) {
   const id = ++request;
   const isNewSong = onScreen !== slug;
+  if (isNewSong) stopFollow();
   if (loaded.slug !== slug) {
     let text;
     try {
@@ -108,6 +112,7 @@ async function showSong(slug, offset) {
   keyEl.textContent = transposeKey(song.key, offset);
   main.replaceChildren(renderSong(song, offset));
   if (isNewSong) scrollTo(0, 0);
+  else repaint();
   onScreen = slug;
 }
 
@@ -125,6 +130,11 @@ document.getElementById('up').addEventListener('click', () => {
 document.getElementById('down').addEventListener('click', () => {
   const { slug, offset } = route();
   go(slug, offset - 1);
+});
+
+document.getElementById('follow').addEventListener('click', () => {
+  if (isFollowing()) stopFollow();
+  else startFollow(loaded.song);
 });
 
 shareBtn.addEventListener('click', async () => {
