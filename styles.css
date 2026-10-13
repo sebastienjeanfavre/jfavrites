@@ -119,24 +119,64 @@ button {
 
 main { padding: var(--pad); }
 
+.titlepage {
+  padding: 1.5rem var(--pad) 0;
+  text-align: center;
+}
+
+.wordmark {
+  font-family: var(--display);
+  font-size: 1.3rem;
+  margin: 0;
+}
+
+.wordmark span {
+  color: var(--accent);
+  font-size: 1rem;
+}
+
+.titlepage::after {
+  content: '';
+  display: block;
+  border-bottom: 3px double var(--rule);
+  margin: 0.5rem var(--pad) 0;
+}
+
 .songbook {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 0 var(--pad);
 }
 
-.songbook a {
-  display: flex;
-  flex-direction: column;
-  padding: 0.75rem 0;
+.song {
+  display: block;
+  padding: 0.4rem 0;
   color: inherit;
   text-decoration: none;
-  border-bottom: 1px solid var(--rule);
 }
 
-.songbook span {
-  font-size: 0.85rem;
-  opacity: 0.65;
+.song-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.title { font-size: 1rem; }
+
+.leader {
+  flex: 1;
+  min-width: 0;
+  border-bottom: 2px dotted rgba(233, 217, 185, 0.45);
+  transform: translateY(-0.25em);
+}
+
+.key { color: var(--accent); font-weight: 700; }
+
+.artist {
+  display: block;
+  font-style: italic;
+  font-size: 0.75rem;
+  opacity: 0.75;
 }
 
 h2 {

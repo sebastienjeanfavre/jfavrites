@@ -4,6 +4,7 @@ import { transposeKey } from './transpose.js';
 import { startSing, stopSing, isSinging, repaint } from './sing.js';
 
 const main = document.getElementById('main');
+const bar = document.getElementById('bar');
 const heading = document.getElementById('heading');
 const controls = document.getElementById('controls');
 const back = document.getElementById('back');
@@ -36,7 +37,7 @@ async function showSongbook() {
   stopSing();
   controls.hidden = true;
   back.hidden = true;
-  heading.textContent = 'JFavrites';
+  bar.hidden = true;
   main.replaceChildren();
 
   let songs;
@@ -50,24 +51,53 @@ async function showSongbook() {
   }
   if (id !== request) return;
 
+  const note = (text) => {
+    const span = document.createElement('span');
+    span.textContent = text;
+    return span;
+  };
+
+  const wordmark = document.createElement('p');
+  wordmark.className = 'wordmark';
+  wordmark.append(note('♪'), ' JFavrites ', note('♪'));
+
+  const titlepage = document.createElement('div');
+  titlepage.className = 'titlepage';
+  titlepage.append(wordmark);
+
   const ul = document.createElement('ul');
   ul.className = 'songbook';
   for (const song of songs) {
-    const title = document.createElement('strong');
+    const title = document.createElement('span');
+    title.className = 'title';
     title.textContent = song.title;
 
-    const meta = document.createElement('span');
-    meta.textContent = `${song.artist} · ${song.key}`;
+    const leader = document.createElement('span');
+    leader.className = 'leader';
+    leader.setAttribute('aria-hidden', 'true');
+
+    const key = document.createElement('b');
+    key.className = 'key';
+    key.textContent = song.key;
+
+    const row = document.createElement('span');
+    row.className = 'song-row';
+    row.append(title, leader, key);
+
+    const artist = document.createElement('span');
+    artist.className = 'artist';
+    artist.textContent = song.artist;
 
     const a = document.createElement('a');
+    a.className = 'song';
     a.href = `#${song.slug}`;
-    a.append(title, meta);
+    a.append(row, artist);
 
     const li = document.createElement('li');
     li.append(a);
     ul.append(li);
   }
-  main.append(ul);
+  main.append(titlepage, ul);
 }
 
 function showNotice(title, message) {
@@ -75,6 +105,7 @@ function showNotice(title, message) {
   stopSing();
   controls.hidden = true;
   back.hidden = false;
+  bar.hidden = false;
   heading.textContent = title;
 
   const link = document.createElement('a');
@@ -110,6 +141,7 @@ async function showSong(slug, offset) {
   const { song } = loaded;
   back.hidden = false;
   controls.hidden = false;
+  bar.hidden = false;
   heading.textContent = song.title;
   keyEl.textContent = transposeKey(song.key, offset);
   main.replaceChildren(renderSong(song, offset));
