@@ -22,6 +22,7 @@ export default {
     const created = await fetch(`${base}/openai/audio/transcriptions`, { method: 'POST', headers, body });
     if (!created.ok) return reply(502, 'Infomaniak rejected the audio');
     const batchId = unwrap(await created.json()).batch_id;
+    if (!batchId) return reply(502, 'Infomaniak gave no batch id');
 
     const pollMs = Number(env.POLL_MS ?? 1000);
     for (let i = 0; i < POLL_LIMIT; i++) {

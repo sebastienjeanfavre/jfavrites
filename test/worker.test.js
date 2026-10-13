@@ -93,3 +93,10 @@ test('a rejected upload gives 502', async () => {
   const res = await worker.fetch(request(), env);
   assert.equal(res.status, 502);
 });
+
+test('a reply without a batch id gives 502 without polling', async () => {
+  const calls = mockFetch([{ body: { result: 'success', data: {} } }]);
+  const res = await worker.fetch(request(), env);
+  assert.equal(res.status, 502);
+  assert.equal(calls.length, 1);
+});

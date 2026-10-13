@@ -7,3 +7,4 @@ docs
 test
 worker
 package.json
+node_modules

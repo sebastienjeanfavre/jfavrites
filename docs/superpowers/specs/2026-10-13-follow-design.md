@@ -92,10 +92,10 @@ Per request:
    cancelled. On success the `data` field holds the result.
 4. Return `{ text }` on success. Return 502 on failed, cancelled, or timeout.
 
-The worker answers CORS preflights with an allow-all origin. The password, not
-the origin, is the gate. Polling runs in the worker, not on the phone: one
-request per chunk is simpler than a polling loop under Safari's tab limits,
-and the free tier counts CPU time, not wait time.
+The worker serves the app too, so page and proxy share one origin and no CORS
+headers are needed. Polling runs in the worker, not on the phone: one request
+per chunk is simpler than a polling loop under Safari's tab limits, and the free
+tier counts CPU time, not wait time.
 
 Deployment: `wrangler deploy` from `worker/`. A README in the folder lists the
 three secrets. No CI.

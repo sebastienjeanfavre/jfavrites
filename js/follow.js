@@ -1,6 +1,6 @@
 import { buildWords, lyricLines, currentLine, advance, promptFor, startCursor } from './align.js';
 
-export const CHUNK_MS = 6000;
+const CHUNK_MS = 6000;
 const WORKER_URL = '/transcribe';
 const PASSWORD_KEY = 'follow-password';
 const FAILURES_TO_STOP = 3;
@@ -8,6 +8,7 @@ const MESSAGE_MS = 3000;
 const SCROLL_FROM_TOP = 0.3;
 
 let session = null;
+let generation = 0;
 
 export function isFollowing() {
   return session !== null;
@@ -21,11 +22,16 @@ export async function startFollow(song) {
   const words = buildWords(song);
   if (words.length === 0) return;
 
+  const started = generation;
   let stream;
   try {
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   } catch {
     showStatus('Microphone blocked', MESSAGE_MS);
+    return;
+  }
+  if (session || started !== generation) {
+    stream.getTracks().forEach((track) => track.stop());
     return;
   }
 
@@ -51,6 +57,7 @@ export async function startFollow(song) {
 }
 
 export function stopFollow(message = '') {
+  generation++;
   if (!session) return;
   const s = session;
   session = null;
@@ -114,9 +121,15 @@ async function send(s, blob) {
     return;
   }
 
-  s.failures = 0;
-  const { text } = await res.json();
+  let text;
+  try {
+    ({ text } = await res.json());
+  } catch {
+    failed(s);
+    return;
+  }
   if (session !== s) return;
+  s.failures = 0;
   const next = advance(s.words, s.cursor, text);
   console.log(`[follow] "${text}" cursor ${s.cursor} -> ${next}`);
   if (next <= s.cursor) return;
