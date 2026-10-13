@@ -47,7 +47,7 @@ body {
   margin: 0;
   background: var(--page);
   color: var(--ink);
-  font: 16px/1.5 var(--serif);
+  font: 19px/1.5 var(--serif);
 }
 
 #bar {
@@ -229,7 +229,7 @@ h2 {
 .chord {
   display: block;
   min-height: 1.25em;
-  font-size: 0.8rem;
+  font-size: 0.95rem;
   line-height: 1.25;
   font-weight: 700;
   color: var(--accent);
