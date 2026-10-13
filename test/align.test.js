@@ -92,6 +92,26 @@ That saved a wretch like me
   assert.equal(advance(w, 6, 'amazing grace how sweet the sound'), 18);
 });
 
+test('a window that straddles a repeated line moves to the true place, not a later repeat', () => {
+  const thrice = parse(`{title: Thrice}
+{artist: Traditional}
+{key: G}
+
+Amazing grace how sweet the sound
+That saved a wretch like me
+Amazing grace how sweet the sound
+That saved a wretch like me
+Amazing grace how sweet the sound
+That saved a wretch like me
+`);
+  const w = buildWords(thrice);
+  assert.equal(advance(w, 12, 'wretch like me amazing grace how'), 15);
+});
+
+test('a window mostly behind the cursor still moves it past the new words', () => {
+  assert.equal(advance(words, 15, 'a wretch like me i once was lost but now'), 18);
+});
+
 test('advance at the end of the words returns the cursor', () => {
   assert.equal(advance(words, 50, 'amazing grace'), 50);
 });

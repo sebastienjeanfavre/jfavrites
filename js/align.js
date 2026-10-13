@@ -1,4 +1,5 @@
 const LOOKAHEAD = 60;
+const LOOKBACK = 20;
 const MIN_MATCH = 3;
 const MIN_RATIO = 0.4;
 const MAX_HEARD = 40;
@@ -47,14 +48,17 @@ export function advance(words, cursor, transcript) {
   const span = Math.ceil(heard.length * 1.5);
   const end = Math.min(words.length, cursor + LOOKAHEAD);
   let best = { count: 0, last: -1 };
-  for (let start = cursor; start < end; start++) {
+  for (let start = Math.max(0, cursor - LOOKBACK); start < end; start++) {
     const slice = words.slice(start, start + span).map((w) => w.word);
     const { count, last } = lcs(heard, slice);
-    if (count > best.count) best = { count, last: start + last };
+    const ahead = start + last >= cursor;
+    if (count > best.count || (count === best.count && ahead && best.last < cursor)) {
+      best = { count, last: start + last };
+    }
   }
 
   if (best.count < MIN_MATCH || best.count < heard.length * MIN_RATIO) return cursor;
-  return best.last + 1;
+  return Math.max(cursor, best.last + 1);
 }
 
 export function promptFor(lyrics, line) {
