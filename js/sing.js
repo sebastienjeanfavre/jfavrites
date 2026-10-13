@@ -50,6 +50,7 @@ export async function startSing(song) {
     lock: navigator.wakeLock ? navigator.wakeLock.request('screen').catch(() => null) : Promise.resolve(null),
   };
   document.getElementById('sing').textContent = 'Stop';
+  document.getElementById('sing').classList.add('singing');
   showStatus('Listening');
   document.addEventListener('visibilitychange', onHidden);
   paint(session);
@@ -67,6 +68,7 @@ export function stopSing(message = '') {
   s.lock.then((lock) => lock?.release());
   document.removeEventListener('visibilitychange', onHidden);
   document.getElementById('sing').textContent = 'Sing';
+  document.getElementById('sing').classList.remove('singing');
   showStatus(message, MESSAGE_MS);
 }
 
@@ -148,6 +150,7 @@ function paint(s) {
   for (const p of document.querySelectorAll('p.line')) {
     const n = Number(p.dataset.line);
     p.classList.toggle('sung', n < line);
+    p.classList.toggle('current', n === line);
   }
   if (line === s.line) return;
   s.line = line;

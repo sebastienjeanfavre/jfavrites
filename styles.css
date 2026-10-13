@@ -117,6 +117,13 @@ button {
   color: inherit;
 }
 
+#sing.singing {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--page);
+  font-weight: 700;
+}
+
 main { padding: var(--pad); }
 
 .titlepage {
@@ -180,11 +187,22 @@ main { padding: var(--pad); }
 }
 
 h2 {
-  margin: 1.4rem 0 0.4rem;
-  font-size: 0.75rem;
+  margin: 1.4rem 0 0.6rem;
+  padding: 0.3rem 0;
+  font-size: 0.7rem;
+  font-weight: 400;
+  text-align: center;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  opacity: 0.55;
+  letter-spacing: 0.22em;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+
+.current {
+  background: rgba(224, 123, 90, 0.18);
+  border-radius: 6px;
+  margin: 0 -9px;
+  padding: 0.15rem 9px;
 }
 
 /* Fading rather than snapping: the cursor often advances several lines at once
