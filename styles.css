@@ -31,16 +31,23 @@
 }
 
 :root {
-  color-scheme: light dark;
+  color-scheme: dark;
+  --page: #271E12;
+  --ink: #E9D9B9;
+  --accent: #E07B5A;
+  --rule: rgba(233, 217, 185, 0.4);
+  --serif: 'Spectral', Georgia, serif;
+  --display: 'IM Fell English', Georgia, serif;
   --pad: 1rem;
-  --rule: rgba(128, 128, 128, 0.3);
 }
 
 * { box-sizing: border-box; }
 
 body {
   margin: 0;
-  font: 16px/1.5 system-ui, -apple-system, sans-serif;
+  background: var(--page);
+  color: var(--ink);
+  font: 16px/1.5 var(--serif);
 }
 
 #bar {
@@ -51,8 +58,8 @@ body {
   gap: 0.5rem;
   align-items: center;
   padding: 0.5rem var(--pad);
-  background: Canvas;
-  border-bottom: 1px solid var(--rule);
+  background: var(--page);
+  border-bottom: 3px double var(--rule);
 }
 
 #back {
@@ -105,7 +112,7 @@ button {
   min-width: 2.4rem;
   min-height: 2.4rem;
   border: 1px solid var(--rule);
-  border-radius: 0.4rem;
+  border-radius: 4px;
   background: transparent;
   color: inherit;
 }
@@ -163,7 +170,7 @@ h2 {
   font-size: 0.8rem;
   line-height: 1.25;
   font-weight: 700;
-  color: #b4531f;
+  color: var(--accent);
 }
 
 /* A chunk is as wide as its widest part. When the chord is wider than its
@@ -178,16 +185,28 @@ h2 {
 
 .text { white-space: pre-wrap; }
 
-@media (prefers-color-scheme: dark) {
-  .chord { color: #f0a35e; }
-}
-
 #status {
   margin: 0;
   padding: 0.25rem var(--pad);
   font-size: 0.85rem;
-  opacity: 0.7;
+  font-style: italic;
+  color: var(--accent);
   border-bottom: 1px solid var(--rule);
 }
 
-.sung { opacity: 0.4; }
+#status:not([hidden])::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 6px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  50% { opacity: 0.35; }
+}
+
+.sung { opacity: 0.35; }
