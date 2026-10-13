@@ -151,6 +151,7 @@ function paint(s) {
     const n = Number(p.dataset.line);
     p.classList.toggle('sung', n < line);
     p.classList.toggle('current', n === line);
+    p.classList.toggle('next', n > line && n <= line + 3);
   }
   if (line === s.line) return;
   s.line = line;
