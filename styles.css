@@ -33,7 +33,7 @@
 :root {
   color-scheme: dark;
   --page: #271E12;
-  --ink: #E9D9B9;
+  --ink: #F5EDDC;
   --accent: #E07B5A;
   --rule: rgba(233, 217, 185, 0.4);
   --serif: 'Spectral', Georgia, serif;
@@ -116,6 +116,7 @@ button {
   border-radius: 4px;
   background: transparent;
   color: inherit;
+  touch-action: manipulation;
 }
 
 #sing.singing {
@@ -147,7 +148,7 @@ main { padding: var(--pad); }
   content: '';
   display: block;
   border-bottom: 3px double var(--rule);
-  margin: 0.5rem var(--pad) 0;
+  margin: 0.5rem var(--pad) 1rem;
 }
 
 .songbook {
@@ -184,7 +185,7 @@ main { padding: var(--pad); }
   display: block;
   font-style: italic;
   font-size: 0.75rem;
-  opacity: 0.75;
+  opacity: 0.85;
 }
 
 main a { color: var(--accent); }
