@@ -6,6 +6,8 @@ const PASSWORD_KEY = 'sing-password';
 const FAILURES_TO_STOP = 3;
 const MESSAGE_MS = 3000;
 const SCROLL_FROM_TOP = 0.3;
+const MAX_IN_FLIGHT = 2;
+const SLOW_MS = 6000;
 
 let session = null;
 let generation = 0;
@@ -48,6 +50,7 @@ export async function startSing(song) {
     cursor: startCursor(words, Number(top?.dataset.line ?? 0)),
     line: -1,
     failures: 0,
+    inFlight: 0,
     stream,
     context,
     stopCapture: null,
@@ -64,7 +67,7 @@ export async function startSing(song) {
     s.stopCapture = await startCapture(
       context,
       stream,
-      (blob) => send(s, blob),
+      (blob) => s.inFlight < MAX_IN_FLIGHT && send(s, blob),
       () => session === s && stopSing('Audio interrupted'),
     );
   } catch {
@@ -98,6 +101,17 @@ function onHidden() {
 }
 
 async function send(s, blob) {
+  s.inFlight++;
+  const slow = setTimeout(() => session === s && showStatus('Slow transcription…'), SLOW_MS);
+  try {
+    await transcribe(s, blob);
+  } finally {
+    s.inFlight--;
+    clearTimeout(slow);
+  }
+}
+
+async function transcribe(s, blob) {
   const form = new FormData();
   form.set('file', blob, 'chunk.wav');
   if (s.language) form.set('language', s.language);
@@ -119,6 +133,7 @@ async function send(s, blob) {
     stopSing('Wrong password');
     return;
   }
+  if (res.status === 504) return;
   if (!res.ok) {
     console.warn('[sing]', res.status, await res.text());
     failed(s);
@@ -134,6 +149,7 @@ async function send(s, blob) {
   }
   if (session !== s) return;
   s.failures = 0;
+  showStatus('Listening');
   const next = advance(s.words, s.cursor, text);
   if (next <= s.cursor) return;
   s.cursor = next;

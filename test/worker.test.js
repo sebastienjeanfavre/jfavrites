@@ -79,15 +79,6 @@ test('a failed job gives 502', async () => {
   assert.equal(res.status, 502);
 });
 
-test('a job still pending after the poll limit gives 502', async () => {
-  mockFetch([
-    { body: { batch_id: 'b1' } },
-    ...Array.from({ length: 30 }, () => ({ body: { status: 'pending', data: null } })),
-  ]);
-  const res = await worker.fetch(request(), env);
-  assert.equal(res.status, 502);
-});
-
 test('a rejected upload gives 502', async () => {
   mockFetch([{ status: 422, body: { result: 'error' } }]);
   const res = await worker.fetch(request(), env);
@@ -99,4 +90,12 @@ test('a reply without a batch id gives 502 without polling', async () => {
   const res = await worker.fetch(request(), env);
   assert.equal(res.status, 502);
   assert.equal(calls.length, 1);
+});
+
+test('a job still pending after eight polls gives 504', async () => {
+  const pending = Array.from({ length: 8 }, () => ({ body: { status: 'pending', data: null } }));
+  const calls = mockFetch([{ body: { batch_id: 'b1' } }, ...pending, { body: { status: 'success', data: { text: 'late' } } }]);
+  const res = await worker.fetch(request(), env);
+  assert.equal(res.status, 504);
+  assert.equal(calls.length, 9);
 });

@@ -1,5 +1,6 @@
 const API = 'https://api.infomaniak.com/1/ai';
-const POLL_LIMIT = 25;
+// About 11 s with 1 s sleeps; a later result is older than the windows sent since.
+const POLL_LIMIT = 8;
 
 export default {
   async fetch(request, env) {
@@ -32,7 +33,7 @@ export default {
       if (job.status === 'success') return reply(200, { text: textOf(job.data) });
       if (job.status === 'failed' || job.status === 'cancelled') return reply(502, 'Transcription failed');
     }
-    return reply(502, 'Transcription timed out');
+    return reply(504, 'Transcription timed out');
   },
 };
 

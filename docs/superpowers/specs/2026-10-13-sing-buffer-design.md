@@ -64,7 +64,7 @@ a French song and a guitar:
 
 ## What does not change
 
-- The worker.
+- The worker, except the timeout below.
 - Painting, scrolling, the button, the status line, the password.
 - Stop conditions: Stop tapped, route change, tab hidden, last line reached.
 
@@ -74,9 +74,6 @@ a French song and a guitar:
   this change on the phone.
 - Shorter windows, faster polls, lower bitrate.
 - A streaming transcription service.
-- A limit on calls in flight. If Infomaniak gets slower than 3 s per call,
-  calls pile up and late results are useless. Add a limit only if the
-  phone test shows it.
 
 ## Units
 
@@ -147,6 +144,18 @@ Other changes:
   text. This shows a rate limit in Web Inspector.
 - 3 failures in a row still stop Sing. About 2 calls are in flight at the
   same time, so an outage stops Sing after about 6 s.
+
+### Slow transcription
+
+A phone test showed Infomaniak slowing to 10–14 s per job, then not answering.
+Calls piled up and the screen still said "Listening".
+
+- At most 2 calls in flight. A window that comes while 2 are pending is
+  skipped; the next window overlaps it.
+- The worker gives up after 8 polls, about 11 s, and returns 504.
+- A 504 is not a failure: it does not count toward the 3 that stop Sing.
+- After 6 s without an answer the status shows "Slow transcription…". The
+  next result sets it back to "Listening".
 
 ### `align.js`
 
