@@ -135,8 +135,8 @@ async function transcribe(s, blob) {
   }
   if (res.status === 504) return;
   if (!res.ok) {
-    console.warn('[sing]', res.status, await res.text());
     failed(s);
+    console.warn('[sing]', res.status, await res.text());
     return;
   }
 
