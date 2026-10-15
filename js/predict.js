@@ -22,6 +22,10 @@ export function chordMap(song) {
   return { wordChord, lineStart };
 }
 
+export function heardWords(words) {
+  return words.flatMap((w) => normalise(w.word).map((word) => ({ word, end: w.end })));
+}
+
 export function predictLine(lineStart, first, last, now, line) {
   if (!first || last.t - first.t < MIN_SPAN_MS) return line;
   const speed = (last.chord - first.chord) / (last.t - first.t);

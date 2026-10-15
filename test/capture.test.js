@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { RATE, resampler, ring, wav, windower } from '../js/capture.js';
+import { RATE, resampler, ring, wav, wavSeconds, windower } from '../js/capture.js';
 
 test('resampler turns a 44.1 kHz tone into the same tone at 16 kHz across block edges', () => {
   const inRate = 44100;
@@ -61,4 +61,9 @@ test('two windows in a row with no new audio report one stall', () => {
   tick();
   assert.equal(stalls, 1);
   assert.equal(sent.length, 1);
+});
+
+test('wavSeconds reads the length of a window from the blob size', () => {
+  assert.equal(wavSeconds(wav(new Float32Array(RATE * 3))), 3);
+  assert.equal(wavSeconds(wav(new Float32Array(8000))), 0.5);
 });

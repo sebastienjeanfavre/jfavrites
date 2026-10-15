@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { parse } from '../js/chordpro.js';
 import { buildWords } from '../js/align.js';
-import { chordMap, predictLine } from '../js/predict.js';
+import { chordMap, predictLine, heardWords } from '../js/predict.js';
 
 const song = parse(`{comment: Intro}
 | [C] [G] |
@@ -67,4 +67,17 @@ test('the prediction stops MAX_AHEAD lines past the confirmed line and at the la
 
 test('two anchors on the same chord hold the line', () => {
   assert.equal(predictLine(starts, { t: 0, chord: 9 }, { t: 10000, chord: 9 }, 60000, 2), 2);
+});
+
+test('heardWords expands each Whisper word into normalised words that keep its end time', () => {
+  const heard = heardWords([
+    { start: 0, end: 0.3, word: " I'm" },
+    { start: 0.3, end: 0.5, word: ' ...' },
+    { start: 0.5, end: 0.9, word: ' tired' },
+  ]);
+  assert.deepEqual(heard, [
+    { word: 'i', end: 0.3 },
+    { word: 'm', end: 0.3 },
+    { word: 'tired', end: 0.9 },
+  ]);
 });

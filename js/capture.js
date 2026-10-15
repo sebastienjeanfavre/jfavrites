@@ -65,6 +65,10 @@ export function wav(samples) {
   return new Blob([view.buffer], { type: 'audio/wav' });
 }
 
+export function wavSeconds(blob) {
+  return (blob.size - 44) / (2 * RATE);
+}
+
 export function windower(buffer, onWindow, onStall) {
   let stale = 0;
   return () => {

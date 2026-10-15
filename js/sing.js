@@ -1,6 +1,6 @@
 import { buildWords, currentLine, advance, startCursor } from './align.js';
-import { chordMap, predictLine } from './predict.js';
-import { startCapture } from './capture.js';
+import { chordMap, predictLine, heardWords } from './predict.js';
+import { startCapture, wavSeconds } from './capture.js';
 
 const WORKER_URL = '/transcribe';
 const PASSWORD_KEY = 'sing-password';
@@ -152,9 +152,9 @@ async function transcribe(s, blob, t) {
     return;
   }
 
-  let text;
+  let words;
   try {
-    ({ text } = await res.json());
+    ({ words } = await res.json());
   } catch {
     failed(s);
     return;
@@ -162,10 +162,11 @@ async function transcribe(s, blob, t) {
   if (session !== s) return;
   s.failures = 0;
   showStatus('Listening');
-  const next = advance(s.words, s.cursor, text);
+  const heard = heardWords(words);
+  const { next, last } = advance(s.words, s.cursor, heard.map((h) => h.word));
   if (next <= s.cursor) return;
   s.cursor = next;
-  const anchor = { t, chord: s.wordChord[next - 1] };
+  const anchor = { t: t - (wavSeconds(blob) - heard[last].end) * 1000, chord: s.wordChord[next - 1] };
   s.first ??= anchor;
   s.last = anchor;
   show(s, currentLine(s.words, next));
