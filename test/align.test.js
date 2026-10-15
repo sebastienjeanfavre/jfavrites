@@ -162,3 +162,8 @@ test('advance tells which heard word matched last, the earliest that completes t
   assert.deepEqual(advance(words, 0, heard), { next: 6, last: 7 });
   assert.deepEqual(advance(words, 0, normalise('hello there friends of mine')), { next: 0, last: -1 });
 });
+
+test('the last heard word is the one matched to the last lyric word, not from another alignment', () => {
+  const w = buildWords(parse('x y z q a b c d e f g h'));
+  assert.deepEqual(advance(w, 0, ['a', 'b', 'c', 'x', 'y', 'z']), { next: 3, last: 5 });
+});

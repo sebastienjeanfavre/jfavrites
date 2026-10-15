@@ -52,7 +52,7 @@ export function advance(words, cursor, heard) {
   return { next: Math.max(cursor, best.last + 1), last: best.heard };
 }
 
-// Longest common subsequence; lastA and lastB are the earliest indices at which the full count is reached.
+// Longest common subsequence; lastB is the earliest end in b, lastA the earliest a-word matched to it.
 function lcs(a, b) {
   const n = a.length;
   const m = b.length;
@@ -64,9 +64,9 @@ function lcs(a, b) {
         : Math.max(dp[i - 1][j], dp[i][j - 1]);
     }
   }
-  let i = n;
-  while (i > 0 && dp[i - 1][m] === dp[n][m]) i--;
   let j = m;
   while (j > 0 && dp[n][j - 1] === dp[n][m]) j--;
+  let i = n;
+  while (i > 0 && dp[i - 1][j] === dp[n][m]) i--;
   return { count: dp[n][m], lastA: i - 1, lastB: j - 1 };
 }
