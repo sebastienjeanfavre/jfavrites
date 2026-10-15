@@ -75,7 +75,7 @@ What this costs, accepted:
 - `chordMap(song)` returns `{ wordChord, lineStart }`.
   - `wordChord[i]` is the global chord index of word `i`, in `buildWords`
     order. Words and their offsets come from
-    `lyric.matchAll(/[\p{L}\p{N}]+/gu)`, then `normalise(m[0])` for each
+    `lyric.matchAll(/[\p{L}\p{N}\p{M}]+/gu)`, then `normalise(m[0])` for each
     match; every word it gives takes the chord with the greatest `index ≤
     m.index`. This gives the same word count as `buildWords`.
   - `lineStart[n]` is the global index of the first chord of line `n`. A
