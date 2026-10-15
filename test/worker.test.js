@@ -43,7 +43,7 @@ test('returns the text once the job succeeds', async () => {
   ]);
   const res = await worker.fetch(request(), env);
   assert.equal(res.status, 200);
-  assert.deepEqual(await res.json(), { text: 'amazing grace' });
+  assert.deepEqual(await res.json(), { text: 'amazing grace', words: [] });
   assert.equal(calls[0].url, `${BASE}/openai/audio/transcriptions`);
   assert.equal(calls[0].init.headers.Authorization, 'Bearer t');
   assert.equal(calls[1].url, `${BASE}/results/b1`);
@@ -58,19 +58,20 @@ test('forwards the audio, language and prompt with the whisper model', async () 
   await worker.fetch(request(), env);
   const sent = calls[0].init.body;
   assert.equal(sent.get('model'), 'whisper');
-  assert.equal(sent.get('response_format'), 'json');
+  assert.equal(sent.get('response_format'), 'verbose_json');
+  assert.equal(sent.get('timestamp_granularities[]'), 'word');
   assert.equal(sent.get('language'), 'en');
   assert.equal(sent.get('prompt'), 'Amazing grace');
   assert.equal(sent.get('file').name, 'chunk.mp4');
 });
 
-test('accepts responses wrapped in result and data, and text as a JSON string', async () => {
+test('accepts responses wrapped in result and data, with the payload as a JSON string', async () => {
   mockFetch([
     { body: { result: 'success', data: { batch_id: 'b2' } } },
-    { body: { result: 'success', data: { status: 'success', data: '{"text":"how sweet"}' } } },
+    { body: { result: 'success', data: { status: 'success', data: '{"text":"how sweet","words":[{"start":0,"end":0.4,"word":" how"}]}' } } },
   ]);
   const res = await worker.fetch(request(), env);
-  assert.deepEqual(await res.json(), { text: 'how sweet' });
+  assert.deepEqual(await res.json(), { text: 'how sweet', words: [{ start: 0, end: 0.4, word: ' how' }] });
 });
 
 test('a failed job gives 502', async () => {

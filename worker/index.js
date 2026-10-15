@@ -13,7 +13,8 @@ export default {
     const body = new FormData();
     body.set('file', form.get('file'));
     body.set('model', 'whisper');
-    body.set('response_format', 'json');
+    body.set('response_format', 'verbose_json');
+    body.set('timestamp_granularities[]', 'word');
     for (const name of ['language', 'prompt']) {
       if (form.get(name)) body.set(name, form.get(name));
     }
@@ -30,7 +31,7 @@ export default {
       await new Promise((resolve) => setTimeout(resolve, pollMs));
       const res = await fetch(`${base}/results/${batchId}`, { headers });
       const job = unwrap(await res.json());
-      if (job.status === 'success') return reply(200, { text: textOf(job.data) });
+      if (job.status === 'success') return reply(200, resultOf(job.data));
       if (job.status === 'failed' || job.status === 'cancelled') return reply(502, 'Transcription failed');
     }
     return reply(504, 'Transcription timed out');
@@ -42,13 +43,9 @@ function unwrap(json) {
   return json.result && json.data !== undefined ? json.data : json;
 }
 
-function textOf(data) {
-  if (typeof data !== 'string') return data.text ?? '';
-  try {
-    return JSON.parse(data).text ?? data;
-  } catch {
-    return data;
-  }
+function resultOf(data) {
+  const payload = typeof data === 'string' ? JSON.parse(data) : data;
+  return { text: payload.text ?? '', words: payload.words ?? [] };
 }
 
 function reply(status, payload) {
