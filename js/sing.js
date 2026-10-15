@@ -1,4 +1,5 @@
 import { buildWords, currentLine, advance, startCursor } from './align.js';
+import { chordMap, predictLine } from './predict.js';
 import { startCapture } from './capture.js';
 
 const WORKER_URL = '/transcribe';
@@ -8,6 +9,7 @@ const MESSAGE_MS = 3000;
 const SCROLL_FROM_TOP = 0.3;
 const MAX_IN_FLIGHT = 2;
 const SLOW_MS = 6000;
+const TICK_MS = 250;
 
 let session = null;
 let generation = 0;
@@ -44,11 +46,16 @@ export async function startSing(song) {
 
   const bar = document.getElementById('bar').offsetHeight;
   const top = [...document.querySelectorAll('p.line')].find((p) => p.getBoundingClientRect().bottom > bar);
+  const cursor = startCursor(words, Number(top?.dataset.line ?? 0));
   const s = {
     words,
+    ...chordMap(song),
     language: song.language,
-    cursor: startCursor(words, Number(top?.dataset.line ?? 0)),
-    line: -1,
+    cursor,
+    shown: currentLine(words, cursor),
+    first: null,
+    last: null,
+    tick: 0,
     failures: 0,
     inFlight: 0,
     stream,
@@ -57,6 +64,10 @@ export async function startSing(song) {
     lock: navigator.wakeLock ? navigator.wakeLock.request('screen').catch(() => null) : Promise.resolve(null),
   };
   session = s;
+  s.tick = setInterval(
+    () => show(s, predictLine(s.lineStart, s.first, s.last, performance.now(), currentLine(s.words, s.cursor))),
+    TICK_MS,
+  );
   document.getElementById('sing').textContent = 'Stop';
   document.getElementById('sing').classList.add('singing');
   showStatus('Listening');
@@ -67,7 +78,7 @@ export async function startSing(song) {
     s.stopCapture = await startCapture(
       context,
       stream,
-      (blob) => s.inFlight < MAX_IN_FLIGHT && send(s, blob),
+      (blob) => s.inFlight < MAX_IN_FLIGHT && send(s, blob, performance.now()),
       () => session === s && stopSing('Audio interrupted'),
     );
   } catch {
@@ -83,6 +94,7 @@ export function stopSing(message = '') {
   const s = session;
   session = null;
   s.stopCapture?.();
+  clearInterval(s.tick);
   s.context.close();
   s.stream.getTracks().forEach((track) => track.stop());
   s.lock.then((lock) => lock?.release());
@@ -100,18 +112,18 @@ function onHidden() {
   if (document.hidden) stopSing();
 }
 
-async function send(s, blob) {
+async function send(s, blob, t) {
   s.inFlight++;
   const slow = setTimeout(() => session === s && showStatus('Slow transcription…'), SLOW_MS);
   try {
-    await transcribe(s, blob);
+    await transcribe(s, blob, t);
   } finally {
     s.inFlight--;
     clearTimeout(slow);
   }
 }
 
-async function transcribe(s, blob) {
+async function transcribe(s, blob, t) {
   const form = new FormData();
   form.set('file', blob, 'chunk.wav');
   if (s.language) form.set('language', s.language);
@@ -153,7 +165,10 @@ async function transcribe(s, blob) {
   const next = advance(s.words, s.cursor, text);
   if (next <= s.cursor) return;
   s.cursor = next;
-  paint(s);
+  const anchor = { t, chord: s.wordChord[next - 1] };
+  s.first ??= anchor;
+  s.last = anchor;
+  show(s, currentLine(s.words, next));
   if (currentLine(s.words, s.cursor) === s.words.at(-1).line) stopSing();
 }
 
@@ -163,15 +178,17 @@ function failed(s) {
   if (s.failures >= FAILURES_TO_STOP) stopSing('Transcription failed');
 }
 
+function show(s, line) {
+  if (line <= s.shown) return;
+  s.shown = line;
+  paint(s);
+}
+
 function paint(s) {
-  const line = currentLine(s.words, s.cursor);
   for (const p of document.querySelectorAll('p.line')) {
-    const n = Number(p.dataset.line);
-    p.classList.toggle('sung', n < line);
+    p.classList.toggle('sung', Number(p.dataset.line) < s.shown);
   }
-  if (line === s.line) return;
-  s.line = line;
-  const el = document.querySelector(`p.line[data-line="${line}"]`);
+  const el = document.querySelector(`p.line[data-line="${s.shown}"]`);
   scrollTo({
     top: scrollY + el.getBoundingClientRect().top - innerHeight * SCROLL_FROM_TOP,
     behavior: 'smooth',
