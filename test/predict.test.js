@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readdirSync, readFileSync } from 'node:fs';
 import { parse } from '../js/chordpro.js';
 import { buildWords } from '../js/align.js';
-import { chordMap } from '../js/predict.js';
+import { chordMap, predictLine } from '../js/predict.js';
 
 const song = parse(`{comment: Intro}
 | [C] [G] |
@@ -41,4 +41,30 @@ test('chordMap gives one chord per word for every song in songs/', () => {
     const s = parse(readFileSync(`songs/${file}`, 'utf8'));
     assert.equal(chordMap(s).wordChord.length, buildWords(s).length, file);
   }
+});
+
+// Lines start at chords 0, 4, 8, 14, 18, 22. Anchors give 1 chord per second.
+const starts = [0, 4, 8, 14, 18, 22];
+const first = { t: 0, chord: 0 };
+const last = { t: 10000, chord: 10 };
+
+test('no prediction without anchors or with anchors less than 10 s apart', () => {
+  assert.equal(predictLine(starts, null, null, 20000, 2), 2);
+  assert.equal(predictLine(starts, first, { t: 9000, chord: 9 }, 20000, 2), 2);
+  assert.equal(predictLine(starts, first, last, 10000, 2), 2);
+});
+
+test('the line moves when the predicted chord reaches the next line', () => {
+  assert.equal(predictLine(starts, first, last, 13000, 2), 2);
+  assert.equal(predictLine(starts, first, last, 14000, 2), 3);
+});
+
+test('the prediction stops MAX_AHEAD lines past the confirmed line and at the last line', () => {
+  assert.equal(predictLine(starts, first, last, 110000, 2), 4);
+  assert.equal(predictLine(starts, first, last, 110000, 4), 5);
+  assert.equal(predictLine(starts, first, last, 110000, 5), 5);
+});
+
+test('two anchors on the same chord hold the line', () => {
+  assert.equal(predictLine(starts, { t: 0, chord: 9 }, { t: 10000, chord: 9 }, 60000, 2), 2);
 });
