@@ -1,7 +1,7 @@
 import { normalise } from './align.js';
 
 const WORD_RE = /[\p{L}\p{N}\p{M}]+/gu;
-const MIN_SPAN_MS = 10000;
+const MIN_SPAN_MS = 6000;
 const MAX_AHEAD = 2;
 // A chord is about a bar and a word about a syllable; both take time. Fitted on a phone log.
 const WORD_WEIGHT = 0.5;

@@ -49,9 +49,10 @@ const starts = [0, 4, 8, 14, 18, 22];
 const first = { t: 0, pos: 0 };
 const last = { t: 10000, pos: 10 };
 
-test('no prediction without anchors or with anchors less than 10 s apart', () => {
+test('no prediction without anchors or with anchors less than 6 s apart', () => {
   assert.equal(predictLine(starts, null, null, 20000, 2), 2);
-  assert.equal(predictLine(starts, first, { t: 9000, pos: 9 }, 20000, 2), 2);
+  assert.equal(predictLine(starts, first, { t: 5000, pos: 5 }, 20000, 2), 2);
+  assert.equal(predictLine(starts, first, { t: 6000, pos: 6 }, 20000, 2), 4);
   assert.equal(predictLine(starts, first, last, 10000, 2), 2);
 });
 

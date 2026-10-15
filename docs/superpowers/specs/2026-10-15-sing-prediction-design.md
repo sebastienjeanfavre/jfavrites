@@ -43,7 +43,7 @@ chords + 0.5 × words 1.0 s. The weight is one constant, `WORD_WEIGHT`.
 3. **Speed.** Only the first and the latest anchor are kept. Speed is
    `(last.pos − first.pos) / (last.t − first.t)`. A hold between them
    counts: the words were sung and came in late.
-4. **Start.** No prediction until the two anchors are at least 10 s apart.
+4. **Start.** No prediction until the two anchors are at least 6 s apart.
 5. **Prediction.** `pos = last.pos + speed × (now − last.t)`. The
    predicted line is the last line whose start is at or before `pos`, but
    at most `MAX_AHEAD` lines past the confirmed line. The
@@ -111,7 +111,7 @@ Node, `test/predict.test.js`, with a small ChordPro fixture:
 - A word before the first chord of its line takes the previous chord, plus
   half a unit per word; the first word of the song takes chord 0.
 - A line starts at its first chord plus half its first word index.
-- Anchors 9 s apart give no prediction; 10 s apart do.
+- Anchors 5 s apart give no prediction; 6 s apart do.
 - Speed 1 chord/s, next line 4 chords ahead: at +3 s the line holds, at +4 s
   it moves.
 - At +100 s the result is `line + MAX_AHEAD`, not further.
