@@ -65,7 +65,7 @@ export async function startSing(song) {
   };
   session = s;
   s.tick = setInterval(
-    () => show(s, predictLine(s.lineStart, s.first, s.last, performance.now(), currentLine(s.words, s.cursor))),
+    () => show(s, predictLine(s.linePos, s.first, s.last, performance.now(), currentLine(s.words, s.cursor))),
     TICK_MS,
   );
   document.getElementById('sing').textContent = 'Stop';
@@ -166,7 +166,7 @@ async function transcribe(s, blob, t) {
   const { next, last } = advance(s.words, s.cursor, heard.map((h) => h.word));
   if (next <= s.cursor) return;
   s.cursor = next;
-  const anchor = { t: t - (wavSeconds(blob) - heard[last].end) * 1000, chord: s.wordChord[next - 1] };
+  const anchor = { t: t - (wavSeconds(blob) - heard[last].end) * 1000, pos: s.wordPos[next - 1] };
   s.first ??= anchor;
   s.last = anchor;
   show(s, currentLine(s.words, next));

@@ -16,41 +16,42 @@ No chords on this one
 `);
 
 // Chords: intro C=0 G=1, line 1 C=2 G=3, line 2 C=4 G=5 F=6, line 4 C=7 G=8.
-test('each word takes the chord at or before it, a line without chords keeps the previous one', () => {
-  const { wordChord } = chordMap(song);
-  assert.deepEqual(wordChord, [
-    1, 2, 2, 2, 3,
-    4, 4, 5, 5,
-    6, 6, 6, 6, 6,
-    7, 8,
+// A word's position is the chord at or before it plus half its word index.
+test('each word takes the chord at or before it plus half a unit per word', () => {
+  const { wordPos } = chordMap(song);
+  assert.deepEqual(wordPos, [
+    1, 2.5, 3, 3.5, 5,
+    6.5, 7, 8.5, 9,
+    10.5, 11, 11.5, 12, 12.5,
+    14, 15.5,
   ]);
 });
 
 test('the first word of a song before any chord takes chord 0', () => {
-  const { wordChord } = chordMap(parse('Hey [C]you'));
-  assert.deepEqual(wordChord, [0, 0]);
+  const { wordPos } = chordMap(parse('Hey [C]you'));
+  assert.deepEqual(wordPos, [0, 0.5]);
 });
 
-test('lineStart is the first chord of each line; a line without chords takes the count so far', () => {
-  assert.deepEqual(chordMap(song).lineStart, [0, 2, 4, 7, 7]);
-  assert.deepEqual(chordMap(parse('[C]a\nb')).lineStart, [0, 1]);
+test('a line starts at its first chord plus half its first word index', () => {
+  assert.deepEqual(chordMap(song).linePos, [0, 2, 6.5, 11.5, 14]);
+  assert.deepEqual(chordMap(parse('[C]a\nb')).linePos, [0, 1.5]);
 });
 
-test('chordMap gives one chord per word for every song in songs/', () => {
+test('chordMap gives one position per word for every song in songs/', () => {
   for (const file of readdirSync('songs').filter((f) => f.endsWith('.chordpro'))) {
     const s = parse(readFileSync(`songs/${file}`, 'utf8'));
-    assert.equal(chordMap(s).wordChord.length, buildWords(s).length, file);
+    assert.equal(chordMap(s).wordPos.length, buildWords(s).length, file);
   }
 });
 
 // Lines start at chords 0, 4, 8, 14, 18, 22. Anchors give 1 chord per second.
 const starts = [0, 4, 8, 14, 18, 22];
-const first = { t: 0, chord: 0 };
-const last = { t: 10000, chord: 10 };
+const first = { t: 0, pos: 0 };
+const last = { t: 10000, pos: 10 };
 
 test('no prediction without anchors or with anchors less than 10 s apart', () => {
   assert.equal(predictLine(starts, null, null, 20000, 2), 2);
-  assert.equal(predictLine(starts, first, { t: 9000, chord: 9 }, 20000, 2), 2);
+  assert.equal(predictLine(starts, first, { t: 9000, pos: 9 }, 20000, 2), 2);
   assert.equal(predictLine(starts, first, last, 10000, 2), 2);
 });
 
@@ -66,7 +67,7 @@ test('the prediction stops MAX_AHEAD lines past the confirmed line and at the la
 });
 
 test('two anchors on the same chord hold the line', () => {
-  assert.equal(predictLine(starts, { t: 0, chord: 9 }, { t: 10000, chord: 9 }, 60000, 2), 2);
+  assert.equal(predictLine(starts, { t: 0, pos: 9 }, { t: 10000, pos: 9 }, 60000, 2), 2);
 });
 
 test('heardWords expands each Whisper word into normalised words that keep its end time', () => {
