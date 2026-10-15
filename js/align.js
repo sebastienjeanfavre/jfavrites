@@ -36,24 +36,23 @@ export function startCursor(words, line) {
 }
 
 // Nobody sings 40 words in a 6 s window; longer text is Whisper hallucinating over the guitar.
-export function advance(words, cursor, transcript) {
-  const heard = normalise(transcript);
-  if (heard.length === 0 || heard.length > MAX_HEARD) return cursor;
+export function advance(words, cursor, heard) {
+  if (heard.length === 0 || heard.length > MAX_HEARD) return { next: cursor, last: -1 };
 
   const span = Math.ceil(heard.length * 1.5);
   const end = Math.min(words.length, cursor + LOOKAHEAD);
-  let best = { count: 0, last: -1 };
+  let best = { count: 0, last: -1, heard: -1 };
   for (let start = Math.max(0, cursor - LOOKBACK); start < end; start++) {
     const slice = words.slice(start, start + span).map((w) => w.word);
-    const { count, last } = lcs(heard, slice);
-    if (count > best.count) best = { count, last: start + last };
+    const { count, lastA, lastB } = lcs(heard, slice);
+    if (count > best.count) best = { count, last: start + lastB, heard: lastA };
   }
 
-  if (best.count < MIN_MATCH || best.count < heard.length * MIN_RATIO) return cursor;
-  return Math.max(cursor, best.last + 1);
+  if (best.count < MIN_MATCH || best.count < heard.length * MIN_RATIO) return { next: cursor, last: -1 };
+  return { next: Math.max(cursor, best.last + 1), last: best.heard };
 }
 
-// Longest common subsequence; `last` is the earliest index in b at which the full count is reached.
+// Longest common subsequence; lastA and lastB are the earliest indices at which the full count is reached.
 function lcs(a, b) {
   const n = a.length;
   const m = b.length;
@@ -65,7 +64,9 @@ function lcs(a, b) {
         : Math.max(dp[i - 1][j], dp[i][j - 1]);
     }
   }
+  let i = n;
+  while (i > 0 && dp[i - 1][m] === dp[n][m]) i--;
   let j = m;
   while (j > 0 && dp[n][j - 1] === dp[n][m]) j--;
-  return { count: dp[n][m], last: j - 1 };
+  return { count: dp[n][m], lastA: i - 1, lastB: j - 1 };
 }

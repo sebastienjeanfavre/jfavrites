@@ -52,23 +52,23 @@ test('currentLine is the line of the next expected word, clamped at the end', ()
 });
 
 test('advance moves the cursor past the last matched word', () => {
-  assert.equal(advance(words, 0, 'amazing grace how sweet the sound'), 6);
+  assert.equal(advance(words, 0, normalise('amazing grace how sweet the sound')).next, 6);
 });
 
 test('advance tolerates missed and misheard words', () => {
-  assert.equal(advance(words, 0, 'amazing grey sweet sound'), 6);
+  assert.equal(advance(words, 0, normalise('amazing grey sweet sound')).next, 6);
 });
 
 test('advance holds when fewer than three words match', () => {
-  assert.equal(advance(words, 0, 'hello there friends of mine'), 0);
+  assert.equal(advance(words, 0, normalise('hello there friends of mine')).next, 0);
 });
 
 test('advance holds when under forty percent of the transcript matches', () => {
-  assert.equal(advance(words, 0, 'amazing grace sound x y z w q r s'), 0);
+  assert.equal(advance(words, 0, normalise('amazing grace sound x y z w q r s')).next, 0);
 });
 
 test('advance never moves backwards', () => {
-  assert.equal(advance(words, 12, 'amazing grace how sweet the sound'), 12);
+  assert.equal(advance(words, 12, normalise('amazing grace how sweet the sound')).next, 12);
 });
 
 test('a window of only words just sung holds the cursor, even when they repeat ahead', () => {
@@ -82,8 +82,8 @@ Amazing grace how sweet the sound
 That saved a wretch like me
 `);
   const w = buildWords(twice);
-  assert.equal(advance(w, 6, 'how sweet the sound'), 6);
-  assert.equal(advance(w, 12, 'that saved a wretch like me'), 12);
+  assert.equal(advance(w, 6, normalise('how sweet the sound')).next, 6);
+  assert.equal(advance(w, 12, normalise('that saved a wretch like me')).next, 12);
 });
 
 test('a chorus sung again after a verse moves the cursor forward', () => {
@@ -99,7 +99,7 @@ Was blind but now I see
 Amazing grace how sweet the sound
 `);
   const w = buildWords(chorus);
-  assert.equal(advance(w, 34, 'amazing grace how sweet the sound'), 40);
+  assert.equal(advance(w, 34, normalise('amazing grace how sweet the sound')).next, 40);
 });
 
 test('a window that straddles a repeated line moves to the true place, not a later repeat', () => {
@@ -115,28 +115,28 @@ Amazing grace how sweet the sound
 That saved a wretch like me
 `);
   const w = buildWords(thrice);
-  assert.equal(advance(w, 12, 'wretch like me amazing grace how'), 15);
+  assert.equal(advance(w, 12, normalise('wretch like me amazing grace how')).next, 15);
 });
 
 test('a window mostly behind the cursor still moves it past the new words', () => {
-  assert.equal(advance(words, 15, 'a wretch like me i once was lost but now'), 18);
+  assert.equal(advance(words, 15, normalise('a wretch like me i once was lost but now')).next, 18);
 });
 
 test('advance at the end of the words returns the cursor', () => {
-  assert.equal(advance(words, 50, 'amazing grace'), 50);
+  assert.equal(advance(words, 50, normalise('amazing grace')).next, 50);
 });
 
 test('advance matches near the end when the transcript is longer than the lyrics left', () => {
-  assert.equal(advance(words, 45, 'the hour i first believed amen amen amen'), 50);
+  assert.equal(advance(words, 45, normalise('the hour i first believed amen amen amen')).next, 50);
 });
 
 test('advance ignores an empty transcript', () => {
-  assert.equal(advance(words, 6, '  ...  '), 6);
+  assert.equal(advance(words, 6, normalise('  ...  ')).next, 6);
 });
 
 test('a transcript longer than anyone sings in one window holds the cursor', () => {
   const tooLong = words.slice(0, 41).map((w) => w.word).join(' ');
-  assert.equal(advance(words, 0, tooLong), 0);
+  assert.equal(advance(words, 0, normalise(tooLong)).next, 0);
 });
 
 test('a repeated phrase consumes only as many repetitions as were sung', () => {
@@ -148,11 +148,17 @@ Row row row your boat gently down the stream
 Merrily merrily merrily merrily life is but a dream
 `);
   const w = buildWords(boat);
-  assert.equal(advance(w, 9, 'merrily merrily merrily'), 12);
+  assert.equal(advance(w, 9, normalise('merrily merrily merrily')).next, 12);
 });
 
 test('startCursor is the first word of the given line, or zero when no line is ahead', () => {
   assert.equal(startCursor(words, 0), 0);
   assert.equal(startCursor(words, 5), 26);
   assert.equal(startCursor(words, 99), 0);
+});
+
+test('advance tells which heard word matched last, the earliest that completes the match', () => {
+  const heard = normalise('la la amazing grace how sweet the sound sound sound');
+  assert.deepEqual(advance(words, 0, heard), { next: 6, last: 7 });
+  assert.deepEqual(advance(words, 0, normalise('hello there friends of mine')), { next: 0, last: -1 });
 });
