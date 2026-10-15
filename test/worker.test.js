@@ -43,7 +43,7 @@ test('returns the text once the job succeeds', async () => {
   ]);
   const res = await worker.fetch(request(), env);
   assert.equal(res.status, 200);
-  assert.deepEqual(await res.json(), { text: 'amazing grace', words: [] });
+  assert.deepEqual(await res.json(), { words: [] });
   assert.equal(calls[0].url, `${BASE}/openai/audio/transcriptions`);
   assert.equal(calls[0].init.headers.Authorization, 'Bearer t');
   assert.equal(calls[1].url, `${BASE}/results/b1`);
@@ -71,7 +71,7 @@ test('accepts responses wrapped in result and data, with the payload as a JSON s
     { body: { result: 'success', data: { status: 'success', data: '{"text":"how sweet","words":[{"start":0,"end":0.4,"word":" how"}]}' } } },
   ]);
   const res = await worker.fetch(request(), env);
-  assert.deepEqual(await res.json(), { text: 'how sweet', words: [{ start: 0, end: 0.4, word: ' how' }] });
+  assert.deepEqual(await res.json(), { words: [{ start: 0, end: 0.4, word: ' how' }] });
 });
 
 test('a failed job gives 502', async () => {

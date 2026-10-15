@@ -45,7 +45,7 @@ function unwrap(json) {
 
 function resultOf(data) {
   const payload = typeof data === 'string' ? JSON.parse(data) : data;
-  return { text: payload.text ?? '', words: payload.words ?? [] };
+  return { words: payload.words ?? [] };
 }
 
 function reply(status, payload) {
