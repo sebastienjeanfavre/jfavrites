@@ -1,5 +1,23 @@
 [
   {
+    "slug": "blackbird",
+    "title": "Blackbird",
+    "artist": "The Beatles",
+    "key": "G"
+  },
+  {
+    "slug": "cette-annee-la",
+    "title": "Cette année-là",
+    "artist": "Claude François",
+    "key": "C"
+  },
+  {
+    "slug": "chicken-fried",
+    "title": "Chicken Fried",
+    "artist": "Zac Brown Band",
+    "key": "G"
+  },
+  {
     "slug": "desole-pour-hier-soir",
     "title": "Désolé pour hier soir",
     "artist": "Tryo",
@@ -24,9 +42,51 @@
     "key": "C"
   },
   {
+    "slug": "jaimerais-trop",
+    "title": "J'aimerais trop",
+    "artist": "Keen'V",
+    "key": "F#m"
+  },
+  {
+    "slug": "je-veux",
+    "title": "Je veux",
+    "artist": "Zaz",
+    "key": "Dm"
+  },
+  {
+    "slug": "knockin-on-heavens-door",
+    "title": "Knockin' on Heaven's Door",
+    "artist": "Bob Dylan",
+    "key": "G"
+  },
+  {
     "slug": "lhorloge-tourne",
     "title": "L'horloge tourne",
     "artist": "Mickaël Miro",
+    "key": "Am"
+  },
+  {
+    "slug": "la-goffa-lolita",
+    "title": "La goffa Lolita",
+    "artist": "La Petite Culotte",
+    "key": "Am"
+  },
+  {
+    "slug": "la-licorne",
+    "title": "La licorne",
+    "artist": "Folklore",
+    "key": "C"
+  },
+  {
+    "slug": "le-penitencier",
+    "title": "Le pénitencier",
+    "artist": "Johnny Hallyday",
+    "key": "Am"
+  },
+  {
+    "slug": "lemon-tree",
+    "title": "Lemon Tree",
+    "artist": "Fool's Garden",
     "key": "Am"
   },
   {
@@ -46,6 +106,18 @@
     "title": "Let It Be",
     "artist": "The Beatles",
     "key": "C"
+  },
+  {
+    "slug": "sweet-caroline",
+    "title": "Sweet Caroline",
+    "artist": "Neil Diamond",
+    "key": "A"
+  },
+  {
+    "slug": "take-me-home-country-roads",
+    "title": "Take Me Home, Country Roads",
+    "artist": "John Denver",
+    "key": "G"
   },
   {
     "slug": "toi-et-moi",
