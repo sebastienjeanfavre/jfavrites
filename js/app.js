@@ -1,6 +1,7 @@
 import { parse } from './chordpro.js';
 import { renderSong } from './render.js';
 import { transposeKey } from './transpose.js';
+import { matches } from './search.js';
 import { startSing, stopSing, isSinging, repaint } from './sing.js';
 
 const main = document.getElementById('main');
@@ -62,10 +63,17 @@ async function showSongbook() {
   wordmark.className = 'wordmark';
   wordmark.append(note('♪'), ' JFavrites ', note('♪'));
 
+  const search = document.createElement('input');
+  search.type = 'search';
+  search.className = 'search';
+  search.placeholder = 'Search a title or singer';
+  search.setAttribute('aria-label', 'Search a title or singer');
+
   const titlepage = document.createElement('div');
   titlepage.className = 'titlepage';
-  titlepage.append(wordmark);
+  titlepage.append(wordmark, search);
 
+  const rows = [];
   const ul = document.createElement('ul');
   ul.className = 'songbook';
   for (const song of songs) {
@@ -97,8 +105,24 @@ async function showSongbook() {
     const li = document.createElement('li');
     li.append(a);
     ul.append(li);
+    rows.push({ song, li });
   }
-  main.append(titlepage, ul);
+
+  const empty = document.createElement('p');
+  empty.className = 'empty';
+  empty.textContent = 'No song found';
+  empty.hidden = true;
+
+  search.addEventListener('input', () => {
+    let shown = 0;
+    for (const { song, li } of rows) {
+      li.hidden = !matches(song, search.value);
+      if (!li.hidden) shown++;
+    }
+    empty.hidden = shown > 0;
+  });
+
+  main.append(titlepage, ul, empty);
 }
 
 function showNotice(title, message) {

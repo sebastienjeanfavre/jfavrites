@@ -144,6 +144,29 @@ main { padding: var(--pad); }
   font-size: 1rem;
 }
 
+/* Below 16px, iOS Safari zooms the page on focus. */
+.search {
+  display: block;
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.4rem 0.6rem;
+  font: 16px var(--serif);
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}
+
+.search::placeholder { color: var(--ink); opacity: 0.5; }
+
+.search:focus { outline: none; border-color: var(--accent); }
+
+.empty {
+  padding: 0 var(--pad);
+  font-style: italic;
+  opacity: 0.85;
+}
+
 .titlepage::after {
   content: '';
   display: block;
