@@ -226,21 +226,32 @@ h2 {
 }
 
 /* Fading rather than snapping: the cursor often advances several lines at once
-   when a transcription lands late. */
-.line { margin: 0 0 0.4rem; transition: opacity 0.5s; }
+   when a transcription lands late. The hanging indent marks a wrapped row as
+   part of the line above. */
+.line {
+  margin: 0 0 0.4rem;
+  padding-left: 1em;
+  text-indent: -1em;
+  transition: opacity 0.5s;
+}
 
+/* Top, not bottom or baseline: a chunk with no lyric has no text line box,
+   so any other alignment sinks its chord to the lyric row. text-indent is
+   inherited; without the reset every chord moves 1em left in its chunk. */
 .chunk {
   display: inline-block;
-  vertical-align: bottom;
+  vertical-align: top;
   max-width: 100%;
+  text-indent: 0;
 }
 
 /* A word split across several chords must not wrap between them. max-width
    lets a word wider than the screen still break as a last resort. */
 .word {
   display: inline-block;
-  vertical-align: bottom;
+  vertical-align: top;
   max-width: 100%;
+  text-indent: 0;
 }
 
 .chord {

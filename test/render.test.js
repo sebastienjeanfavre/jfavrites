@@ -84,10 +84,33 @@ test('a chord slice starting with whitespace folds it into the previous chunk', 
   );
 });
 
+test('a slice of only whitespace keeps it, so chord-only lines keep their spacing', () => {
+  assert.deepEqual(
+    splitLine({
+      lyric: '       ',
+      chords: [{ index: 0, chord: 'Am' }, { index: 3, chord: 'C' }, { index: 7, chord: 'D' }],
+    }),
+    [{ chord: 'Am', text: '   ' }, { chord: 'C', text: '    ' }, { chord: 'D', text: '' }],
+  );
+});
+
 test('a chunk of several words wraps between its words, the chord stays on the first', () => {
   assert.deepEqual(splitWords([{ chord: 'Cm', text: 'matin, 15 heures' }]), [
     [{ chord: 'Cm', text: 'matin, ' }],
     [{ chord: '', text: '15 ' }],
     [{ chord: '', text: 'heures' }],
+  ]);
+});
+
+test('a French spaced punctuation mark stays with the word before it', () => {
+  assert.deepEqual(splitWords([{ chord: 'Gm', text: 'quoi ? Papala' }]), [
+    [{ chord: 'Gm', text: 'quoi ' }, { chord: '', text: '? ' }],
+    [{ chord: '', text: 'Papala' }],
+  ]);
+});
+
+test('a chord on a punctuation mark does not let it wrap alone', () => {
+  assert.deepEqual(splitWords([{ chord: 'Eb', text: "m'dire " }, { chord: 'Bb', text: '?' }]), [
+    [{ chord: 'Eb', text: "m'dire " }, { chord: 'Bb', text: '?' }],
   ]);
 });
