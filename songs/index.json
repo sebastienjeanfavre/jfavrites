@@ -6,6 +6,12 @@
     "key": "G"
   },
   {
+    "slug": "blue-suede-shoes",
+    "title": "Blue Suede Shoes",
+    "artist": "Elvis Presley",
+    "key": "A"
+  },
+  {
     "slug": "cette-annee-la",
     "title": "Cette année-là",
     "artist": "Claude François",
@@ -48,6 +54,12 @@
     "key": "F#m"
   },
   {
+    "slug": "je-laime-a-mourir",
+    "title": "Je l'aime à mourir",
+    "artist": "Francis Cabrel",
+    "key": "C"
+  },
+  {
     "slug": "je-veux",
     "title": "Je veux",
     "artist": "Zaz",
@@ -66,6 +78,12 @@
     "key": "Am"
   },
   {
+    "slug": "lhymne-de-nos-campagnes",
+    "title": "L'hymne de nos campagnes",
+    "artist": "Tryo",
+    "key": "Dm"
+  },
+  {
     "slug": "la-goffa-lolita",
     "title": "La goffa Lolita",
     "artist": "La Petite Culotte",
@@ -78,16 +96,40 @@
     "key": "C"
   },
   {
+    "slug": "la-mauvaise-reputation",
+    "title": "La mauvaise réputation",
+    "artist": "Georges Brassens",
+    "key": "Am"
+  },
+  {
+    "slug": "le-lion-est-mort-ce-soir",
+    "title": "Le lion est mort ce soir",
+    "artist": "Pow Wow",
+    "key": "G"
+  },
+  {
     "slug": "le-penitencier",
     "title": "Le pénitencier",
     "artist": "Johnny Hallyday",
     "key": "Am"
   },
   {
+    "slug": "le-sud",
+    "title": "Le Sud",
+    "artist": "Nino Ferrer",
+    "key": "C"
+  },
+  {
     "slug": "lemon-tree",
     "title": "Lemon Tree",
     "artist": "Fool's Garden",
     "key": "Am"
+  },
+  {
+    "slug": "les-champs-elysees",
+    "title": "Les Champs-Élysées",
+    "artist": "Joe Dassin",
+    "key": "C"
   },
   {
     "slug": "les-copains-dabord",
@@ -106,6 +148,18 @@
     "title": "Let It Be",
     "artist": "The Beatles",
     "key": "C"
+  },
+  {
+    "slug": "mistral-gagnant",
+    "title": "Mistral gagnant",
+    "artist": "Renaud",
+    "key": "Cm"
+  },
+  {
+    "slug": "santiano",
+    "title": "Santiano",
+    "artist": "Hugues Aufray",
+    "key": "Em"
   },
   {
     "slug": "sweet-caroline",
