@@ -184,5 +184,11 @@
     "title": "Toi et moi",
     "artist": "Guillaume Grand",
     "key": "Em"
+  },
+  {
+    "slug": "wonderwall",
+    "title": "Wonderwall",
+    "artist": "Oasis",
+    "key": "Em"
   }
 ]
