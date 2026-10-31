@@ -44,6 +44,7 @@ export function splitWords(chunks) {
 
 export function renderSong(song, semitones) {
   const flats = prefersFlats(transposeKey(song.key, semitones));
+  const keyFlats = prefersFlats(song.key);
   const frag = document.createDocumentFragment();
   let index = 0;
 
@@ -55,14 +56,14 @@ export function renderSong(song, semitones) {
       el.append(h);
     }
     for (const line of section.lines) {
-      el.append(renderLine(line, index++, semitones, flats));
+      el.append(renderLine(line, index++, semitones, flats, keyFlats));
     }
     frag.append(el);
   }
   return frag;
 }
 
-function renderLine(line, index, semitones, flats) {
+function renderLine(line, index, semitones, flats, keyFlats) {
   const p = document.createElement('p');
   p.className = 'line';
   p.dataset.line = index;
@@ -73,7 +74,7 @@ function renderLine(line, index, semitones, flats) {
 
       const chord = document.createElement('b');
       chord.className = 'chord';
-      chord.textContent = chunk.chord ? transposeChord(chunk.chord, semitones, flats) : '';
+      chord.textContent = chunk.chord ? transposeChord(chunk.chord, semitones, flats, keyFlats) : '';
 
       const text = document.createElement('span');
       text.className = 'text';

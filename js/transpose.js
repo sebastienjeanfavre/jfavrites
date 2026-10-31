@@ -23,13 +23,20 @@ export function prefersFlats(key) {
   return FLAT_KEYS.has(key);
 }
 
-export function transposeChord(chord, semitones, preferFlats) {
+// A note written against the song key's spelling is borrowed (Bb in C) and keeps
+// its accidental in every key; any other note takes the target key's spelling.
+function names(accidental, preferFlats, keyFlats) {
+  if (accidental === 'b' && !keyFlats) return FLAT;
+  if (accidental === '#' && keyFlats) return SHARP;
+  return preferFlats ? FLAT : SHARP;
+}
+
+export function transposeChord(chord, semitones, preferFlats, keyFlats = preferFlats) {
   const m = CHORD_RE.exec(chord);
   if (!m) return chord;
   const [, root, acc, quality, bassRoot, bassAcc] = m;
-  const names = preferFlats ? FLAT : SHARP;
-  let out = names[mod12(pitchOf(root, acc) + semitones)] + quality;
-  if (bassRoot) out += '/' + names[mod12(pitchOf(bassRoot, bassAcc) + semitones)];
+  let out = names(acc, preferFlats, keyFlats)[mod12(pitchOf(root, acc) + semitones)] + quality;
+  if (bassRoot) out += '/' + names(bassAcc, preferFlats, keyFlats)[mod12(pitchOf(bassRoot, bassAcc) + semitones)];
   return out;
 }
 

@@ -43,6 +43,17 @@ test('spelling follows the preferFlats flag', () => {
   assert.equal(transposeChord('C', 1, false), 'C#');
 });
 
+test('a chord written against the song key keeps its accidental in every key', () => {
+  assert.equal(transposeChord('Bb', 0, false, false), 'Bb');
+  assert.equal(transposeChord('Bb6', 0, false, false), 'Bb6');
+  assert.equal(transposeChord('Eb', -5, false, false), 'Bb');
+  assert.equal(transposeChord('D/F#', 0, true, true), 'D/F#');
+});
+
+test('a chord written with the song key spelling follows the target key', () => {
+  assert.equal(transposeChord('F#m', 4, true, false), 'Bbm');
+});
+
 test('transposition wraps around the octave in both directions', () => {
   assert.equal(transposeChord('B', 1, false), 'C');
   assert.equal(transposeChord('C', -1, false), 'B');
